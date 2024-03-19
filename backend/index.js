@@ -16,12 +16,16 @@ const enquiryRouter = require("./routes/enquiryRoute.js");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+const cors = require("cors");
+
 
 
 
 // I add app.use and app.listen in try catch 
 dbConnect()
     .then(() => {
+
+        app.use(cors());
 
         app.use(morgan("dev")); // log requests to the console
 
