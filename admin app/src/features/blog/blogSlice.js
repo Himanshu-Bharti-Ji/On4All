@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import productCategoryService from './prodCategoryService';
+import blogService from './blogService';
 
 
-export const getProductCategories = createAsyncThunk(
-    "product-category/get-product-categories",
+export const getBlogs = createAsyncThunk(
+    "blog/get-blogs",
     async (thukAPI) => {
         try {
-            return await productCategoryService.getProductCategories();
+            return await blogService.getBlogs();
         } catch (error) {
             return thukAPI.rejectWithValue(error);
         }
@@ -14,29 +14,29 @@ export const getProductCategories = createAsyncThunk(
 )
 
 const initialState = {
-    productCategories: [],
+    blogs: [],
     isError: false,
     isLoading: false,
     isSuccess: false,
     message: "",
 };
 
-export const productCategorySlice = createSlice({
-    name: "productCategories",
+export const blogSlice = createSlice({
+    name: "blogs",
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getProductCategories.pending, (state) => {
+            .addCase(getBlogs.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(getProductCategories.fulfilled, (state, action) => {
+            .addCase(getBlogs.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isError = false;
                 state.isSuccess = true;
-                state.productCategories = action.payload;
+                state.blogs = action.payload;
             })
-            .addCase(getProductCategories.rejected, (state, action) => {
+            .addCase(getBlogs.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.isSuccess = false;
@@ -46,4 +46,4 @@ export const productCategorySlice = createSlice({
 });
 
 
-export default productCategorySlice.reducer;
+export default blogSlice.reducer;

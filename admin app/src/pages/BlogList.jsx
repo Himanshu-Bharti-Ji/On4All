@@ -1,5 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Table } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBlogs } from '../features/blog/blogSlice';
+import { TbEdit } from "react-icons/tb";
+import { MdDeleteForever } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 const columns = [
     {
@@ -7,29 +12,51 @@ const columns = [
         dataIndex: 'key',
     },
     {
-        title: 'Name',
-        dataIndex: 'name',
+        title: 'Title',
+        dataIndex: 'title',
+        sorter: (a, b) => a.title.length - b.title.length,
     },
     {
-        title: 'Product',
-        dataIndex: 'product',
+        title: 'Category',
+        dataIndex: 'category',
+        sorter: (a, b) => a.category.length - b.category.length,
     },
     {
-        title: 'Status',
-        dataIndex: 'status',
+        title: 'Action',
+        dataIndex: 'action',
     },
 ];
-const data1 = [];
-for (let i = 0; i < 46; i++) {
-    data1.push({
-        key: i,
-        name: `Edward King ${i}`,
-        product: 32,
-        status: `London, Park Lane no. ${i}`,
-    });
-}
+
 
 const BlogList = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getBlogs());
+    }, [])
+
+    const blogState = useSelector((state) => state.blog.blogs.data)
+
+    const data1 = [];
+    if (blogState && Array.isArray(blogState)) {
+        for (let i = 0; i < blogState.length; i++) {
+            data1.push({
+                key: i + 1,
+                title: `${blogState[i].title}`,
+                category: `${blogState[i].category}`,
+                action:
+                    <>
+                        <Link to="/" className='fs-4 text-success '>
+                            <TbEdit />
+                        </Link>
+                        <Link to="/" className=' ms-3 fs-4 text-danger '>
+                            <MdDeleteForever />
+                        </Link>
+                    </>
+            });
+        }
+    }
+
     return (
         <div>
             <h3 className='mb-4 title'>Blog List</h3>
