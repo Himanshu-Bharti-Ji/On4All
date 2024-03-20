@@ -28,7 +28,7 @@ const BrandList = () => {
 
     useEffect(() => {
         dispatch(getBrands());
-    })
+    }, [])
 
     const brandState = useSelector((state) => state.brand.brands.data);
 
