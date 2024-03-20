@@ -30,19 +30,22 @@ const Login = () => {
     const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth)
 
     useEffect(() => {
-        if (!user == null || isSuccess) {
+        if (isSuccess) {
             navigate("admin")
         }
         else {
-            alert(`An error occurred:`);
+            navigate("");
         }
-    }, [user, isLoading, isSuccess, isError, message])
+    }, [user, isLoading, isSuccess, isError])
 
     return (
         <div className="py-5 d-flex justify-content-center align-items-center " style={{ background: "#ffd333", minHeight: "100vh" }} >
             <div className="my-5 w-25 bg-white rounded-3 mx-auto p-4">
                 <h3 className='title'>Login</h3>
                 <p>Login to your account to continue.</p>
+                <div className="error">
+                    {message.message == "Rejected" ? "You are not an Admin" : ""}
+                </div>
                 <form action="" onSubmit={formik.handleSubmit}>
                     <CustomInput
                         type='email'
