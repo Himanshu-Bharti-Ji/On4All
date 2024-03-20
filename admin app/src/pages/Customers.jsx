@@ -29,7 +29,7 @@ const Customers = () => {
     }, [])
 
     const customerState = useSelector((state) => state.customer.customers.data);
-    console.log(customerState);
+    // console.log(customerState);
 
     // Check if customerState is defined and is an array
     let data1 = [];

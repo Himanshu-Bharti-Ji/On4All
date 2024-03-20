@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Table } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { getOrders } from '../features/auth/authSlice';
 
 const columns = [
     {
@@ -30,6 +32,15 @@ for (let i = 0; i < 46; i++) {
 }
 
 const Orders = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getOrders());
+    }, [])
+
+    const blogState = useSelector((state) => state.auth.orders)
+    // console.log(blogState);
+
     return (
         <div>
             <h3 className='mb-4 title'>Orders</h3>

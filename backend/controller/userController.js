@@ -665,7 +665,7 @@ const createOrder = asyncHandeler(async (req, res) => {
 const getOrders = asyncHandeler(async (req, res) => {
     const { _id } = req.user;
     validateMongoDbId(_id);
-    console.log(_id);
+    // console.log(_id);
 
     try {
 
@@ -673,7 +673,7 @@ const getOrders = asyncHandeler(async (req, res) => {
         const userOrders = await Order.findOne({ orderby: _id })
             .populate("products.product")
             .populate("orderby").exec()
-        console.log(userOrders);
+        // console.log(userOrders);
 
         return res.status(200)
             .json(new ApiResponse(200, userOrders, 'User orders fetched Successfully'));

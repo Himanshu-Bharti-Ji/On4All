@@ -2,6 +2,14 @@ import axios from 'axios';
 import { base_url } from '../../utils/base_url';
 
 
+const getTokenFromLocalStorage = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+
+const config = {
+    headers: {
+        Authorization: `Bearer ${getTokenFromLocalStorage.data.refreshToken}`,
+        Accept: "application/json"
+    }
+}
 
 const login = async (userData) => {
     const response = await axios.post(`${base_url}/user/admin-login`, userData)
@@ -10,9 +18,18 @@ const login = async (userData) => {
     }
     return response.data;
 }
+console.log(getTokenFromLocalStorage.data.refreshToken);
+console.log(config);
+
+const getOrders = async () => {
+    const response = await axios.get(`${base_url}/user/get-orders`, config)
+
+    return response.data;
+}
 
 const authService = {
     login,
+    getOrders,
 }
 
 export default authService;
