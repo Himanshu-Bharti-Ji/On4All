@@ -628,12 +628,12 @@ const createOrder = asyncHandeler(async (req, res) => {
                 id: uniqid(),
                 method: "COD",
                 amount: finalAmount,
-                status: "Pending",
+                status: "Completed",
                 created: Date.now(),
                 currency: "inr",
 
             },
-            orderStatus: "Pending",
+            orderStatus: "Completed",
             orderby: user._id,
         }
     ).save();
@@ -672,11 +672,33 @@ const getOrders = asyncHandeler(async (req, res) => {
         // console.log(user);
         const userOrders = await Order.findOne({ orderby: _id })
             .populate("products.product")
-            .populate("orderby").exec()
+            .populate("orderby")
+            .populate("paymentIntent")
+            .exec()
         // console.log(userOrders);
 
         return res.status(200)
             .json(new ApiResponse(200, userOrders, 'User orders fetched Successfully'));
+
+    } catch (error) {
+        throw new ApiError(404, error?.message || 'Something went wrong!');
+    }
+})
+
+const getAllOrders = asyncHandeler(async (req, res) => {
+
+    try {
+
+        // console.log(user);
+        const allUserOrders = await Order.find()
+            .populate("products.product")
+            .populate("orderby")
+            .populate("paymentIntent")
+            .exec()
+        // console.log(userOrders);
+
+        return res.status(200)
+            .json(new ApiResponse(200, allUserOrders, 'All Orders Fetched Successfully'));
 
     } catch (error) {
         throw new ApiError(404, error?.message || 'Something went wrong!');
@@ -732,5 +754,6 @@ module.exports = {
     applyCoupon,
     createOrder,
     getOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getAllOrders
 }

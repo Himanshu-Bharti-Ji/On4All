@@ -18,12 +18,9 @@ const login = async (userData) => {
     }
     return response.data;
 }
-// console.log(getTokenFromLocalStorage.data.refreshToken);
-// console.log(config);
 
 const getOrders = async () => {
-    // console.log(getTokenFromLocalStorage.data.accessToken);
-    const response = await axios.get(`${base_url}/user/get-orders`, config)
+    const response = await axios.get(`${base_url}/user/all-orders`, config)
     return response.data;
 }
 

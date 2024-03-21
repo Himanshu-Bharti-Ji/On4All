@@ -20,7 +20,8 @@ const { registerUser,
     applyCoupon,
     createOrder,
     getOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getAllOrders
 } = require("../controller/userController.js");
 const { verifyJWT, isAdmin } = require("../middlewares/authMiddleware.js");
 
@@ -41,6 +42,7 @@ router.get("/all-users", getAllUsers);
 router.get("/wishlist", verifyJWT, getWishlist);
 router.get("/get-cart", verifyJWT, getUserCart);
 router.get("/get-orders", verifyJWT, getOrders);
+router.get("/all-orders", verifyJWT, isAdmin, getAllOrders);
 router.get("/:id", verifyJWT, isAdmin, getCurrentUser);
 
 router.delete("/empty-cart", verifyJWT, emptyCart);
