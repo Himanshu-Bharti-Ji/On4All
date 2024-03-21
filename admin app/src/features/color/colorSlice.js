@@ -4,11 +4,11 @@ import colorService from './colorService';
 
 export const getColors = createAsyncThunk(
     "color/get-colors",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await colorService.getColors();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

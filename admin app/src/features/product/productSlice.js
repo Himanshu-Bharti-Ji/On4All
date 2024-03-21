@@ -4,11 +4,11 @@ import productService from './productService';
 
 export const getProducts = createAsyncThunk(
     "product/get-products",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await productService.getProducts();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

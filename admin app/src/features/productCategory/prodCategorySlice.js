@@ -4,11 +4,11 @@ import productCategoryService from './prodCategoryService';
 
 export const getProductCategories = createAsyncThunk(
     "product-category/get-product-categories",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await productCategoryService.getProductCategories();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

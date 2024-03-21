@@ -6,7 +6,7 @@ const getTokenFromLocalStorage = localStorage.getItem("user") ? JSON.parse(local
 
 const config = {
     headers: {
-        Authorization: `Bearer ${getTokenFromLocalStorage.data.refreshToken}`,
+        Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.data.accessToken : ""}`,
         Accept: "application/json"
     }
 }
@@ -18,12 +18,12 @@ const login = async (userData) => {
     }
     return response.data;
 }
-console.log(getTokenFromLocalStorage.data.refreshToken);
-console.log(config);
+// console.log(getTokenFromLocalStorage.data.refreshToken);
+// console.log(config);
 
 const getOrders = async () => {
+    // console.log(getTokenFromLocalStorage.data.accessToken);
     const response = await axios.get(`${base_url}/user/get-orders`, config)
-
     return response.data;
 }
 

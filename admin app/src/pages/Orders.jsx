@@ -21,15 +21,7 @@ const columns = [
         dataIndex: 'status',
     },
 ];
-const data1 = [];
-for (let i = 0; i < 46; i++) {
-    data1.push({
-        key: i,
-        name: `Edward King ${i}`,
-        product: 32,
-        status: `London, Park Lane no. ${i}`,
-    });
-}
+
 
 const Orders = () => {
     const dispatch = useDispatch();
@@ -38,8 +30,21 @@ const Orders = () => {
         dispatch(getOrders());
     }, [])
 
-    const blogState = useSelector((state) => state.auth.orders)
+    const blogState = useSelector((state) => state.auth.orders.data)
     // console.log(blogState);
+
+    const data1 = [];
+    if (blogState && Array.isArray(blogState)) {
+        for (let i = 0; i < 46; i++) {
+            data1.push({
+                key: i,
+                name: `Edward King ${i}`,
+                product: 32,
+                status: `London, Park Lane no. ${i}`,
+            });
+        }
+    }
+
 
     return (
         <div>

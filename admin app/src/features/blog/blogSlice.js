@@ -4,11 +4,11 @@ import blogService from './blogService';
 
 export const getBlogs = createAsyncThunk(
     "blog/get-blogs",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await blogService.getBlogs();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

@@ -4,11 +4,11 @@ import enquiryService from './enquiryService';
 
 export const getEnquiries = createAsyncThunk(
     "enquiry/get-enquiries",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await enquiryService.getEnquiries();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

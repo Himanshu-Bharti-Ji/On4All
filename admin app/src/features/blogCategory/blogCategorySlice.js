@@ -4,11 +4,11 @@ import blogCategoryService from './blogCategoryService';
 
 export const getBlogCategories = createAsyncThunk(
     "blog-category/get-blog-categories",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await blogCategoryService.getBlogCategories();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

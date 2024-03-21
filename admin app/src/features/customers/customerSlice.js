@@ -4,11 +4,11 @@ import customerService from './customerService';
 
 export const getUsers = createAsyncThunk(
     "customer/get-customers",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await customerService.getUsers();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )

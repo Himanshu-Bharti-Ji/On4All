@@ -4,11 +4,11 @@ import brandService from './brandService';
 
 export const getBrands = createAsyncThunk(
     "brand/get-brands",
-    async (thukAPI) => {
+    async (thunkAPI) => {
         try {
             return await brandService.getBrands();
         } catch (error) {
-            return thukAPI.rejectWithValue(error);
+            return thunkAPI.rejectWithValue(error);
         }
     }
 )
