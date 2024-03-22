@@ -13,6 +13,7 @@ const brandRouter = require("./routes/brandRoute.js");
 const couponRouter = require("./routes/couponRoute.js");
 const colorRouter = require("./routes/colorRoute.js");
 const enquiryRouter = require("./routes/enquiryRoute.js");
+const uploadRouter = require("./routes/uploadRoute.js");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
@@ -44,6 +45,7 @@ dbConnect()
         app.use("/api/v1/coupon", couponRouter)
         app.use("/api/v1/color", colorRouter)
         app.use("/api/v1/enquiry", enquiryRouter)
+        app.use("/api/v1/upload", uploadRouter)
 
 
         app.listen(PORT, () => {
