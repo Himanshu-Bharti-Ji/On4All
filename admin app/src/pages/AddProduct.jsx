@@ -12,7 +12,8 @@ import { getColors } from '../features/color/colorSlice';
 import Multiselect from "react-widgets/Multiselect";
 import "react-widgets/styles.css";
 import Dropzone from 'react-dropzone'
-import { uploadImage } from '../features/upload/uploadSlice';
+import { deleteImage, uploadImage } from '../features/upload/uploadSlice';
+import { createProducts } from '../features/product/productSlice';
 
 
 
@@ -31,18 +32,27 @@ const AddProduct = () => {
     const dispatch = useDispatch();
 
     const [color, setColor] = useState([])
+    const [images, setImages] = useState([])
 
     useEffect(() => {
         dispatch(getBrands());
         dispatch(getProductCategories());
         dispatch(getColors());
         formik.values.color = color;
+        formik.values.images = images;
     }, [])
+
+    useEffect(() => {
+        formik.setFieldValue('images', images);
+    }, [images]);
 
     const brandState = useSelector((state) => state.brand.brands.data)
     const productCategoryState = useSelector((state) => state.productCategory.productCategories.data)
     const colorState = useSelector((state) => state.color.colors.data)
     const imageState = useSelector((state) => state.upload.images.data)
+
+
+
 
     const colors = []
     if (colorState) {
@@ -54,6 +64,15 @@ const AddProduct = () => {
         });
     }
 
+    useEffect(() => {
+        if (imageState) {
+            setImages(imageState.map((i) => ({
+                public_id: i.public_id,
+                url: i.url
+            })));
+        }
+    }, [imageState]);
+    // console.log(images);
 
 
     const formik = useFormik({
@@ -64,11 +83,12 @@ const AddProduct = () => {
             brand: "",
             productCategory: "",
             color: [],
-            quantity: ""
+            quantity: "",
+            images: [],
         },
         validationSchema: schema,
         onSubmit: values => {
-            alert(JSON.stringify(values));
+            dispatch(createProducts(values))
         },
     });
 
@@ -184,7 +204,22 @@ const AddProduct = () => {
                             )}
                         </Dropzone>
                     </div>
-                    div.show-images
+                    <div className="show-images d-flex flex-wrap gap-3 ">
+                        {imageState && imageState.map((i, index) => {
+                            return (
+                                <div key={index} className='position-relative '>
+                                    <button
+                                        type='button'
+                                        onClick={() => dispatch(deleteImage(i.public_id))}
+                                        className='btn-close position-absolute '
+                                        style={{ top: "8px", right: "8px" }}
+                                    >
+                                    </button>
+                                    <img src={i.url} alt="" width={150} height={150} />
+                                </div>
+                            )
+                        })}
+                    </div>
 
 
                     <button className='btn btn-success border-0 rounded-3 my-4' type="submit">Add Product</button>
