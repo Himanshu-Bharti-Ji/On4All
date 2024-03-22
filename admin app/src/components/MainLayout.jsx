@@ -8,6 +8,8 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from '@ant-design/icons';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Layout, Menu, Button, theme } from 'antd';
 import { AiOutlineDashboard } from "react-icons/ai";
 import { LiaUser } from "react-icons/lia";
@@ -196,6 +198,18 @@ const MainLayout = () => {
                         borderRadius: borderRadiusLG,
                     }}
                 >
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={250}
+                        hideProgressBar={false}
+                        newestOnTop={true}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        theme="light"
+                        style={{ zIndex: 9999 }}
+                    />
                     <Outlet />
                 </Content>
             </Layout>

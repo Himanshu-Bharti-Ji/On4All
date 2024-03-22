@@ -53,7 +53,7 @@ const ProductList = () => {
                 title: `${productState[i].title}`,
                 price: `${productState[i].price}`,
                 brand: `${productState[i].brand}`,
-                category: `${productState[i].category}`,
+                category: `${productState[i].productCategory}`,
                 action:
                     <>
                         <Link to="/" className='fs-4 text-success '>

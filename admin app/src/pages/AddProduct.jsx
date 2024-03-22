@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from "react-router-dom"
 import CustomInput from '../components/CustomInput'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { toast } from 'react-toastify';
 import { InboxOutlined } from '@ant-design/icons';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -16,7 +18,6 @@ import { deleteImage, uploadImage } from '../features/upload/uploadSlice';
 import { createProducts } from '../features/product/productSlice';
 
 
-
 let schema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
     description: Yup.string().required("Description is required"),
@@ -25,12 +26,13 @@ let schema = Yup.object().shape({
     productCategory: Yup.string().required("Product Category is required"),
     color: Yup.array().min(1, 'Colors are required'),
     quantity: Yup.number().required("Quantity is required"),
+    tags: Yup.string().required("Tag is required"),
 })
 
 const AddProduct = () => {
 
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
     const [color, setColor] = useState([])
     const [images, setImages] = useState([])
 
@@ -50,9 +52,23 @@ const AddProduct = () => {
     const productCategoryState = useSelector((state) => state.productCategory.productCategories.data)
     const colorState = useSelector((state) => state.color.colors.data)
     const imageState = useSelector((state) => state.upload.images.data)
+    const newProductState = useSelector((state) => state.product)
 
 
 
+    useEffect(() => {
+        if (newProductState) {
+            const { isSuccess, isError, isLoading, createdProduct } = newProductState;
+            if (isSuccess && createdProduct) {
+                toast.success("Product Added Successfully!");
+            }
+
+            if (isError) {
+                console.log('Product creation error');
+                toast.error("Something went wrong!");
+            }
+        }
+    }, [newProductState]);
 
     const colors = []
     if (colorState) {
@@ -82,6 +98,7 @@ const AddProduct = () => {
             price: "",
             brand: "",
             productCategory: "",
+            tags: "",
             color: [],
             quantity: "",
             images: [],
@@ -89,6 +106,10 @@ const AddProduct = () => {
         validationSchema: schema,
         onSubmit: values => {
             dispatch(createProducts(values))
+            formik.resetForm();
+            setTimeout(() => {
+                navigate("/admin/product-list")
+            }, 3000);
         },
     });
 
@@ -132,7 +153,7 @@ const AddProduct = () => {
                         </div>
                     </div>
 
-                    <select id="" className='form-control py-3 mb-3 '
+                    <select id="" className='form-control form-select  py-3 mb-3 '
                         name="brand"
                         onChange={formik.handleChange("brand")}
                         onBlur={formik.handleBlur("brand")}
@@ -148,7 +169,7 @@ const AddProduct = () => {
                     <div className="error">
                         {formik.touched.brand && formik.errors.brand}
                     </div>
-                    <select id="" className='form-control py-3 mb-3 '
+                    <select id="" className='form-control form-select  py-3 mb-3 '
                         name="productCategory"
                         onChange={formik.handleChange("productCategory")}
                         onBlur={formik.handleBlur("productCategory")}
@@ -164,15 +185,42 @@ const AddProduct = () => {
                     <div className="error">
                         {formik.touched.productCategory && formik.errors.productCategory}
                     </div>
-                    <Multiselect
+                    <select id="" className='form-control form-select  py-3 mb-3 '
+                        name="tags"
+                        onChange={formik.handleChange("tags")}
+                        onBlur={formik.handleBlur("tags")}
+                        value={formik.values.tags}
+                    >
+                        <option value="" disabled>Select Tag</option>
+                        <option value="featured">Featured</option>
+                        <option value="popular">Popular</option>
+                        <option value="special">Special</option>
+
+                    </select>
+                    <div className="error">
+                        {formik.touched.tags && formik.errors.tags}
+                    </div>
+                    <Multiselect className='fs-6'
                         name="color"
                         dataKey="id"
                         textField="color"
-                        data={colors.filter(color => !formik.values.color.includes(color.color))}
+                        data={colors.filter(color => !formik.values.color.map(c => c._id).includes(color._id))}
                         value={formik.values.color}
+                        defaultValue={color}
+                        placeholder='Select Color'
                         onChange={(selectedColors) => {
                             formik.setFieldValue('color', selectedColors);
                         }}
+                        onCreate={(newColor) => {
+                            const existingColor = colors.find(color => color.color === newColor);
+                            if (existingColor) {
+                                const newSelectedColors = formik.values.color.filter(color => color._id !== existingColor._id);
+                                formik.setFieldValue('color', newSelectedColors);
+                            } else {
+                                // Handle creating new color if needed
+                            }
+                        }}
+
                     />
                     <div className="error">
                         {formik.touched.color && formik.errors.color}
