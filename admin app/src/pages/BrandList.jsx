@@ -5,6 +5,7 @@ import { getBrands } from '../features/brand/brandSlice';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from 'react-router-dom';
+import { resetState } from '../features/blog/blogSlice';
 
 const columns = [
     {
@@ -27,6 +28,7 @@ const BrandList = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(resetState());
         dispatch(getBrands());
     }, [])
 
@@ -40,7 +42,7 @@ const BrandList = () => {
                 name: `${brandState[i].title}`,
                 action:
                     <>
-                        <Link to="/" className='fs-4 text-success '>
+                        <Link to={`/admin/brand/${brandState[i]._id}`} className='fs-4 text-success '>
                             <TbEdit />
                         </Link>
                         <Link to="/" className=' ms-3 fs-4 text-danger '>
