@@ -15,7 +15,7 @@ import Multiselect from "react-widgets/Multiselect";
 import "react-widgets/styles.css";
 import Dropzone from 'react-dropzone'
 import { deleteImage, uploadImage } from '../features/upload/uploadSlice';
-import { createProducts } from '../features/product/productSlice';
+import { createProducts, resetState } from '../features/product/productSlice';
 
 
 let schema = Yup.object().shape({
@@ -108,7 +108,7 @@ const AddProduct = () => {
             dispatch(createProducts(values))
             formik.resetForm();
             setTimeout(() => {
-                navigate("/admin/product-list")
+                dispatch(resetState());
             }, 3000);
         },
     });

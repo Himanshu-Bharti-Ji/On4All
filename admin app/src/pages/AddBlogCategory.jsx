@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { newBlogCategory } from "../features/blogCategory/blogCategorySlice"
+import { newBlogCategory, resetState } from "../features/blogCategory/blogCategorySlice"
 
 let schema = Yup.object().shape({
     title: Yup.string().required("Category Name is required"),
@@ -41,7 +41,7 @@ const AddBlogCategory = () => {
             dispatch(newBlogCategory(values))
             formik.resetForm();
             setTimeout(() => {
-                navigate("/admin/blog-category-list")
+                dispatch(resetState());
             }, 3000);
         },
     });
