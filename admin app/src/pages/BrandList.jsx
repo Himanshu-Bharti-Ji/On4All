@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBrands } from '../features/brand/brandSlice';
+import { deleteCurrentBrand, getBrands } from '../features/brand/brandSlice';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { resetState } from '../features/blog/blogSlice';
+import CustomModal from '../components/CustomModal';
 
 const columns = [
     {
@@ -25,6 +26,18 @@ const columns = [
 
 
 const BrandList = () => {
+
+    const [open, setOpen] = useState(false);
+    const [brandId, setBrandId] = useState("");
+    const showModal = (e) => {
+        setOpen(true);
+        setBrandId(e);
+    };
+
+    const hideModal = () => {
+        setOpen(false);
+    };
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -45,12 +58,22 @@ const BrandList = () => {
                         <Link to={`/admin/brand/${brandState[i]._id}`} className='fs-4 text-success '>
                             <TbEdit />
                         </Link>
-                        <Link to="/" className=' ms-3 fs-4 text-danger '>
+                        <button to="/" className=' ms-3 fs-4 text-danger bg-transparent border-0 '
+                            onClick={() => showModal(brandState[i]._id)}
+                        >
                             <MdDeleteForever />
-                        </Link>
+                        </button>
                     </>
             });
         }
+    }
+
+    const deleteBrand = (e) => {
+        setOpen(false)
+        dispatch(deleteCurrentBrand(e))
+        setTimeout(() => {
+            dispatch(getBrands());
+        }, 100);
     }
 
     return (
@@ -59,6 +82,12 @@ const BrandList = () => {
             <div>
                 <Table columns={columns} dataSource={data1} />
             </div>
+            <CustomModal
+                hideModal={hideModal}
+                open={open}
+                performAction={() => deleteBrand(brandId)}
+                title="Are you sure you want to delete this Brand ?"
+            />
         </div>
     )
 }
