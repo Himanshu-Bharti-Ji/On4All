@@ -208,7 +208,6 @@ const MainLayout = () => {
                         pauseOnFocusLoss
                         draggable
                         theme="light"
-                        style={{ zIndex: 9999 }}
                     />
                     <Outlet />
                 </Content>
