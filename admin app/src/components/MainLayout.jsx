@@ -19,6 +19,9 @@ import { SiBrandfolder } from "react-icons/si";
 import { BiCategoryAlt, BiColorFill, BiBookAdd } from "react-icons/bi";
 import { MdLibraryBooks, MdOutlineContactPage, MdNotifications } from "react-icons/md";
 import { TbCategoryPlus } from "react-icons/tb";
+import { PiGraphDuotone } from "react-icons/pi";
+import { RiCoupon2Line } from "react-icons/ri";
+
 
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
@@ -116,6 +119,23 @@ const MainLayout = () => {
                             key: 'orders',
                             icon: <BsCartCheck className='fs-5' />,
                             label: 'Orders',
+                        },
+                        {
+                            key: 'marketing',
+                            icon: <PiGraphDuotone className='fs-5' />,
+                            label: 'Marketing',
+                            children: [
+                                {
+                                    key: 'add-coupon',
+                                    icon: <RiCoupon2Line className='fs-5' />,
+                                    label: 'Add Coupon',
+                                },
+                                {
+                                    key: 'coupon-list',
+                                    icon: <CiCircleList className='fs-5' />,
+                                    label: 'Coupon List',
+                                },
+                            ]
                         },
                         {
                             key: 'blogs',

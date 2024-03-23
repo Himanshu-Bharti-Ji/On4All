@@ -21,6 +21,8 @@ import AddColor from './pages/AddColor'
 import AddCategory from './pages/AddCategory'
 import AddBrand from './pages/AddBrand'
 import AddProduct from './pages/AddProduct'
+import AddCoupon from './pages/AddCoupon'
+import CouponList from './pages/CouponList'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -48,6 +50,8 @@ function App() {
           <Route path='category' element={<AddCategory />} />
           <Route path='brand' element={<AddBrand />} />
           <Route path='product' element={<AddProduct />} />
+          <Route path='add-coupon' element={<AddCoupon />} />
+          <Route path='coupon-list' element={<CouponList />} />
         </Route>
       </Routes>
     </Router>
