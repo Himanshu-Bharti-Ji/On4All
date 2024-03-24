@@ -15,9 +15,32 @@ const createProductCategory = async (productCategory) => {
     return response.data;
 }
 
+const updateCurrProductCategory = async (productCategory) => {
+    console.log(productCategory);
+
+    const response = await axios.put(`${base_url}/product-category/${productCategory.id}`, { title: productCategory.productCategoryData.title }, config)
+
+    return response.data;
+}
+
+const getCurrProductCategory = async (id) => {
+    const response = await axios.get(`${base_url}/product-category/${id}`, config)
+    return response.data;
+
+}
+
+const deleteCurrProductCategory = async (id) => {
+    const response = await axios.delete(`${base_url}/product-category/${id}`, config)
+    return response.data;
+
+}
+
 const productCategoryService = {
     getProductCategories,
-    createProductCategory
+    createProductCategory,
+    getCurrProductCategory,
+    updateCurrProductCategory,
+    deleteCurrProductCategory,
 }
 
 export default productCategoryService;

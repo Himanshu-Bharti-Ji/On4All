@@ -5,7 +5,7 @@ const CustomModal = (props) => {
     const { open, performAction, hideModal, title } = props;
     return (
         <Modal
-            title="Modal"
+            title="Confirmation"
             open={open}
             onOk={performAction}
             onCancel={hideModal}
