@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBlogCategories } from '../features/blogCategory/blogCategorySlice';
+import { deleteCurrBlogCategory, getBlogCategories, resetState } from '../features/blogCategory/blogCategorySlice';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from 'react-router-dom';
+import CustomModal from '../components/CustomModal';
 
 const columns = [
     {
@@ -23,9 +24,23 @@ const columns = [
 
 
 const BlogCategoryList = () => {
+
+    const [open, setOpen] = useState(false);
+    const [blogCategoryId, setBlogCategoryId] = useState("");
+    const showModal = (e) => {
+        setOpen(true);
+        setBlogCategoryId(e);
+    };
+
+    const hideModal = () => {
+        setOpen(false);
+    };
+
+
     const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(resetState())
         dispatch(getBlogCategories());
     }, [])
 
@@ -39,15 +54,25 @@ const BlogCategoryList = () => {
                 name: `${blogCategoryState[i].title}`,
                 action:
                     <>
-                        <Link to="/" className='fs-4 text-success '>
+                        <Link to={`/admin/add-blog-category/${blogCategoryState[i]._id}`} className='fs-4 text-success '>
                             <TbEdit />
                         </Link>
-                        <Link to="/" className=' ms-3 fs-4 text-danger '>
+                        <button to="/" className=' ms-3 fs-4 text-danger bg-transparent border-0 '
+                            onClick={() => showModal(blogCategoryState[i]._id)}
+                        >
                             <MdDeleteForever />
-                        </Link>
+                        </button>
                     </>
             });
         }
+    }
+
+    const deleteBlogCategory = (e) => {
+        setOpen(false)
+        dispatch(deleteCurrBlogCategory(e))
+        setTimeout(() => {
+            dispatch(getBlogCategories());
+        }, 100);
     }
 
     return (
@@ -56,6 +81,12 @@ const BlogCategoryList = () => {
             <div>
                 <Table columns={columns} dataSource={data1} />
             </div>
+            <CustomModal
+                hideModal={hideModal}
+                open={open}
+                performAction={() => deleteBlogCategory(blogCategoryId)}
+                title="Are you sure you want to delete this Blog Category ?"
+            />
         </div>
     )
 }

@@ -16,7 +16,6 @@ const createProductCategory = async (productCategory) => {
 }
 
 const updateCurrProductCategory = async (productCategory) => {
-    console.log(productCategory);
 
     const response = await axios.put(`${base_url}/product-category/${productCategory.id}`, { title: productCategory.productCategoryData.title }, config)
 

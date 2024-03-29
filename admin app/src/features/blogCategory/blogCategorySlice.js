@@ -25,6 +25,42 @@ export const newBlogCategory = createAsyncThunk(
     }
 )
 
+export const getCurrBlogCategory = createAsyncThunk(
+    "blog-category/get-current-blog-category",
+    async (id, thunkAPI) => {
+        try {
+            return await blogCategoryService.getCurrBlogCategory(id);
+        } catch (error) {
+            const errorMessage = error.message || 'Failed to get a blog category';
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+)
+
+export const updateCurrBlogCategory = createAsyncThunk(
+    "blog-category/update-current-blog-category",
+    async (category, thunkAPI) => {
+        try {
+            return await blogCategoryService.updateCurrBlogCategory(category);
+        } catch (error) {
+            const errorMessage = error.message || 'Failed to create blog category';
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+)
+
+export const deleteCurrBlogCategory = createAsyncThunk(
+    "blog-category/delete-current-blog-category",
+    async (id, thunkAPI) => {
+        try {
+            return await blogCategoryService.deleteCurrBlogCategory(id);
+        } catch (error) {
+            const errorMessage = error.message || 'Failed to get a blog category';
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+)
+
 export const resetState = createAction("Reset_all");
 
 const initialState = {
@@ -66,6 +102,51 @@ export const blogCategorySlice = createSlice({
                 state.createdBlogCategory = action.payload;
             })
             .addCase(newBlogCategory.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+            })
+            .addCase(getCurrBlogCategory.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getCurrBlogCategory.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.blogsCategoryName = action.payload.data.title;
+            })
+            .addCase(getCurrBlogCategory.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+            })
+            .addCase(updateCurrBlogCategory.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateCurrBlogCategory.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.updatedBlogCategory = action.payload;
+            })
+            .addCase(updateCurrBlogCategory.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+            })
+            .addCase(deleteCurrBlogCategory.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(deleteCurrBlogCategory.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.deletedBlogCategory = action.payload;
+            })
+            .addCase(deleteCurrBlogCategory.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.isSuccess = false;

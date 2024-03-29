@@ -45,7 +45,9 @@ function App() {
           <Route path='brand-list' element={<BrandList />} />
           <Route path='product-list' element={<ProductList />} />
           <Route path='add-blog' element={<AddBlog />} />
+          <Route path='add-blog/:id' element={<AddBlog />} />
           <Route path='add-blog-category' element={<AddBlogCategory />} />
+          <Route path='add-blog-category/:id' element={<AddBlogCategory />} />
           <Route path='color' element={<AddColor />} />
           <Route path='color/:id' element={<AddColor />} />
           <Route path='category' element={<AddCategory />} />

@@ -64,7 +64,6 @@ const AddCategory = () => {
                 setTimeout(() => {
                     dispatch(resetState());
                 }, 300);
-
             }
         },
     });
@@ -86,7 +85,7 @@ const AddCategory = () => {
                             {formik.touched.title && formik.errors.title}
                         </div>
                     </div>
-                    <button className='btn btn-success border-0 rounded-3 my-3' type="submit">{getProductCategoryId !== undefined ? "Edit" : "Add"} Category</button>
+                    <button className='btn btn-success border-0 rounded-3 my-3' type="submit">{getProductCategoryId !== undefined ? "Update" : "Add"} Category</button>
                 </form>
             </div>
         </div>
