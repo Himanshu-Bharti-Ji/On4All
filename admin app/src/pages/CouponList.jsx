@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBrands } from '../features/brand/brandSlice';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from 'react-router-dom';
-import { getCoupons } from '../features/coupon/couponSlice';
+import { deleteCurrentCoupon, getCoupons, resetState } from '../features/coupon/couponSlice';
+import CustomModal from '../components/CustomModal';
 
 const columns = [
     {
@@ -35,9 +35,22 @@ const columns = [
 
 
 const CouponList = () => {
+
+    const [open, setOpen] = useState(false);
+    const [couponId, setCouponId] = useState("");
+    const showModal = (e) => {
+        setOpen(true);
+        setCouponId(e);
+    };
+
+    const hideModal = () => {
+        setOpen(false);
+    };
+
     const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(resetState());
         dispatch(getCoupons());
     }, [])
 
@@ -53,15 +66,25 @@ const CouponList = () => {
                 expiryDate: new Date(couponState[i].expiry).toLocaleDateString(),
                 action:
                     <>
-                        <Link to="/" className='fs-4 text-success '>
+                        <Link to={`/admin/add-coupon/${couponState[i]._id}`} className='fs-4 text-success '>
                             <TbEdit />
                         </Link>
-                        <Link to="/" className=' ms-3 fs-4 text-danger '>
+                        <button to="/" className=' ms-3 fs-4 text-danger bg-transparent border-0 '
+                            onClick={() => showModal(couponState[i]._id)}
+                        >
                             <MdDeleteForever />
-                        </Link>
+                        </button>
                     </>
             });
         }
+    }
+
+    const deleteCoupon = (e) => {
+        setOpen(false)
+        dispatch(deleteCurrentCoupon(e))
+        setTimeout(() => {
+            dispatch(getCoupons());
+        }, 100);
     }
 
     return (
@@ -70,6 +93,12 @@ const CouponList = () => {
             <div>
                 <Table columns={columns} dataSource={data1} />
             </div>
+            <CustomModal
+                hideModal={hideModal}
+                open={open}
+                performAction={() => deleteCoupon(couponId)}
+                title="Are you sure you want to delete this Coupon ?"
+            />
         </div>
     )
 }

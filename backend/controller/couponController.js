@@ -60,9 +60,29 @@ const deleteCoupon = asyncHandeler(async (req, res) => {
     }
 })
 
+const getCurrentCoupon = asyncHandeler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+        const getCoupon = await Coupon.findById(id);
+
+        return res.status(202)
+            .json(new ApiResponse(
+                202,
+                getCoupon,
+                "This is your current Coupon"
+            ));
+
+    } catch (error) {
+        throw new ApiError(400, error?.message || "There are no coupons in this time");
+    }
+})
+
+
 module.exports = {
     createCoupon,
     getAllCoupons,
     updateCoupon,
     deleteCoupon,
+    getCurrentCoupon
 }
