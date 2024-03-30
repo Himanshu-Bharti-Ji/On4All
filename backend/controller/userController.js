@@ -29,11 +29,11 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandeler(async (req, res) => {
 
     // 1. get user details from frontend
-    const { firstName, lastName, email, password, role, cart, address, wishlist } = req.body
+    const { firstName, lastName, email, mobile, password, role, cart, address, wishlist } = req.body
 
     // 2. validation - not empty
     if (
-        [firstName, email, password, role, cart, address, wishlist].some((field) => field?.trim() === "")
+        [firstName, email, mobile, password, role, cart, address, wishlist].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "Some fields are required")
     }
@@ -50,6 +50,7 @@ const registerUser = asyncHandeler(async (req, res) => {
         firstName,
         lastName,
         email,
+        mobile,
         password,
         role,
         cart,
@@ -315,7 +316,7 @@ const getCurrentUser = asyncHandeler(async (req, res) => {
 
 const updateUserDetails = asyncHandeler(async (req, res) => {
     // console.log(req.user)
-    const { firstName, lastName, email } = req.body
+    const { firstName, lastName, email, mobile } = req.body
     const { _id } = req.user
     validateMongoDbId(_id)
     try {
@@ -326,7 +327,8 @@ const updateUserDetails = asyncHandeler(async (req, res) => {
                 $set: {
                     firstName,
                     lastName,
-                    email
+                    email,
+                    mobile
                 }
             },
             { new: true }
