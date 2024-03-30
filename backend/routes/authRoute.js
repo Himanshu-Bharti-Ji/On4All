@@ -21,7 +21,8 @@ const { registerUser,
     createOrder,
     getOrders,
     updateOrderStatus,
-    getAllOrders
+    getAllOrders,
+    getOrderByUserId
 } = require("../controller/userController.js");
 const { verifyJWT, isAdmin } = require("../middlewares/authMiddleware.js");
 
@@ -43,6 +44,7 @@ router.get("/wishlist", verifyJWT, getWishlist);
 router.get("/get-cart", verifyJWT, getUserCart);
 router.get("/get-orders", verifyJWT, getOrders);
 router.get("/all-orders", verifyJWT, isAdmin, getAllOrders);
+router.post("/getorderbyuser/:id", verifyJWT, isAdmin, getOrderByUserId);
 router.get("/:id", verifyJWT, isAdmin, getCurrentUser);
 
 router.delete("/empty-cart", verifyJWT, emptyCart);

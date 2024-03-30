@@ -619,8 +619,6 @@ const createOrder = asyncHandeler(async (req, res) => {
         finalAmount = userCart.cartTotal;
     }
 
-    // console.log(user);
-
     let newOrder = await new Order(
         {
             products: userCart.products,
@@ -637,8 +635,6 @@ const createOrder = asyncHandeler(async (req, res) => {
             orderby: user._id,
         }
     ).save();
-
-    // console.log(newOrder);
 
     let update = userCart.products.map((item) => {
         return {
@@ -665,17 +661,14 @@ const createOrder = asyncHandeler(async (req, res) => {
 const getOrders = asyncHandeler(async (req, res) => {
     const { _id } = req.user;
     validateMongoDbId(_id);
-    // console.log(_id);
 
     try {
 
-        // console.log(user);
         const userOrders = await Order.findOne({ orderby: _id })
             .populate("products.product")
             .populate("orderby")
             .populate("paymentIntent")
             .exec()
-        // console.log(userOrders);
 
         return res.status(200)
             .json(new ApiResponse(200, userOrders, 'User orders fetched Successfully'));
@@ -689,16 +682,33 @@ const getAllOrders = asyncHandeler(async (req, res) => {
 
     try {
 
-        // console.log(user);
         const allUserOrders = await Order.find()
             .populate("products.product")
             .populate("orderby")
             .populate("paymentIntent")
             .exec()
-        // console.log(userOrders);
 
         return res.status(200)
             .json(new ApiResponse(200, allUserOrders, 'All Orders Fetched Successfully'));
+
+    } catch (error) {
+        throw new ApiError(404, error?.message || 'Something went wrong!');
+    }
+})
+
+const getOrderByUserId = asyncHandeler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+
+    try {
+        const userOrders = await Order.findOne({ orderby: id })
+            .populate("products.product")
+            .populate("orderby")
+            .populate("paymentIntent")
+            .exec()
+
+        return res.status(200)
+            .json(new ApiResponse(200, userOrders, 'User orders fetched Successfully'));
 
     } catch (error) {
         throw new ApiError(404, error?.message || 'Something went wrong!');
@@ -755,5 +765,6 @@ module.exports = {
     createOrder,
     getOrders,
     updateOrderStatus,
-    getAllOrders
+    getAllOrders,
+    getOrderByUserId
 }

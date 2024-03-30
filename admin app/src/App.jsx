@@ -24,6 +24,7 @@ import AddProduct from './pages/AddProduct'
 import AddCoupon from './pages/AddCoupon'
 import CouponList from './pages/CouponList'
 import ViewEnquiry from './pages/ViewEnquiry'
+import ViewOrder from './pages/ViewOrder'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -41,6 +42,7 @@ function App() {
           <Route path='blog-list' element={<BlogList />} />
           <Route path='blog-category-list' element={<BlogCategoryList />} />
           <Route path='orders' element={<Orders />} />
+          <Route path='order/:id' element={<ViewOrder />} />
           <Route path='customers' element={<Customers />} />
           <Route path='color-list' element={<ColorList />} />
           <Route path='category-list' element={<CategoryList />} />
