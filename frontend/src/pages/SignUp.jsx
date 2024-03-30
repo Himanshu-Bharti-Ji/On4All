@@ -5,7 +5,7 @@ import Container from '../components/Container';
 import CustomInput from '../components/CustomInput';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { registerUser } from '../features/user/userSlice';
 
 const signUpSchema = yup.object({
@@ -17,7 +17,6 @@ const signUpSchema = yup.object({
         .min(6, "Password should be at least 6 characters")
         .max(16, "Password can not exceed 16 characters")
         .required("Password is required"),
-
 });
 
 const SignUp = () => {
