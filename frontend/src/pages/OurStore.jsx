@@ -6,7 +6,7 @@ import gr3 from "../images/gr3.svg"
 import gr2 from "../images/gr2.svg"
 import gr from "../images/gr.svg"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import BreadCrumb from '../components/BreadCrumb'
 import Meta from '../components/Meta';
@@ -14,12 +14,29 @@ import ReactStars from "react-rating-stars-component";
 import ProductCard from '../components/ProductCard';
 import Color from '../components/Color';
 import Container from '../components/Container';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllProducts } from "../features/product/productSlice"
+
 
 
 
 
 function OurStore() {
     const [grid, setGrid] = useState(2);
+
+    const dispatch = useDispatch()
+
+    const productState = useSelector((state) => state.product.product.data)
+
+    useEffect(() => {
+        getProducts()
+    }, [])
+
+    const getProducts = () => {
+        dispatch(getAllProducts())
+    }
+
+
     return (
         <>
             <Meta title={"On4All | Our Store"} />
@@ -172,15 +189,7 @@ function OurStore() {
 
                         <div className="product-list pb-5 ">
                             <div className="d-flex flex-wrap justify-content-between  gap-15">
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
-                                <ProductCard grid={grid} />
+                                <ProductCard data={productState} grid={grid} />
                             </div>
                         </div>
                     </div>

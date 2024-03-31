@@ -420,7 +420,8 @@ footer .input-group-text {
 }
 
 .product-image img {
-  width: 270px;
+  width: 259.44px;
+  height: 259.44px;
 }
 
 .product-card:hover .product-image > img {
