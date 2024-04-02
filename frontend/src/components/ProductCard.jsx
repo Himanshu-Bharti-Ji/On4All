@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 // importing images
@@ -10,21 +11,32 @@ import boat_headphone from "../images/boat-headphone.jpg"
 import prodcompare from "../images/prodcompare.svg"
 import view from "../images/view.svg"
 import add_cart from "../images/add-cart.svg"
+import { addToWishlist } from '../features/product/productSlice';
+
 
 
 function ProductCard(props) {
     const { grid, data } = props;
     console.log(data);
     let location = useLocation();
+
+    const dispatch = useDispatch()
+
+    const addToWish = (id) => {
+        dispatch(addToWishlist(id))
+    }
+
     return (
         <>
             {
                 data?.map((item, index) => {
                     return (
                         <div key={index} className={`${location.pathname === "/store" ? `gr-${grid}` : "col-2"}`}>
-                            <Link to={`${location.pathname === "/" ? "store/product/:id" : location.pathname === "store" ? "" : "product/:id"}`} className="product-card position-relative ">
+                            <Link
+                                // to={`${location.pathname === "/" ? "store/product/:id" : location.pathname === "store" ? "" : "product/:id"}`} 
+                                className="product-card position-relative ">
                                 <div className="wishlist-icon position-absolute ">
-                                    <button className='border-0 bg-transparent '>
+                                    <button className='border-0 bg-transparent ' onClick={(e) => { addToWish(item?._id) }} >
                                         <img src={wish} alt="wish image" />
                                     </button>
                                 </div>

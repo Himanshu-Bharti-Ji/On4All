@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { base_url } from '../../utils/axiosConfig';
+import { base_url, config } from '../../utils/axiosConfig';
 
 
 const getAllProducts = async (productData) => {
@@ -9,8 +9,8 @@ const getAllProducts = async (productData) => {
     }
 }
 
-const addToWishlist = async (productData) => {
-    const response = await axios.get(`${base_url}/product/all-products`, productData);
+const addToWishlist = async (productId) => {
+    const response = await axios.put(`${base_url}/product/wishlist`, { productId }, config);
     if (response.data) {
         return response.data;
     }
@@ -18,4 +18,5 @@ const addToWishlist = async (productData) => {
 
 export const productService = {
     getAllProducts,
+    addToWishlist
 }
