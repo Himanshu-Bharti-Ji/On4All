@@ -477,7 +477,7 @@ const forgotPasswordToken = asyncHandeler(async (req, res) => {
 
 const getWishlist = asyncHandeler(async (req, res) => {
     const { _id } = req.user;
-    console.log(req.user)
+    // console.log(req.user)
     try {
         // console.log(user);
         const user = await User.findById(_id).populate("wishlist")

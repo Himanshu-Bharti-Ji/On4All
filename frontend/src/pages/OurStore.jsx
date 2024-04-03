@@ -27,6 +27,7 @@ function OurStore() {
     const dispatch = useDispatch()
 
     const productState = useSelector((state) => state.product.product.data)
+    console.log("PRODUCT STATE", productState);
 
     useEffect(() => {
         getProducts()
@@ -189,7 +190,7 @@ function OurStore() {
 
                         <div className="product-list pb-5 ">
                             <div className="d-flex flex-wrap justify-content-between  gap-15">
-                                <ProductCard data={productState} grid={grid} />
+                                <ProductCard data={productState ? productState : []} grid={grid} />
                             </div>
                         </div>
                     </div>

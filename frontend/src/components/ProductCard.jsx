@@ -36,7 +36,9 @@ function ProductCard(props) {
                                 // to={`${location.pathname === "/" ? "store/product/:id" : location.pathname === "store" ? "" : "product/:id"}`} 
                                 className="product-card position-relative ">
                                 <div className="wishlist-icon position-absolute ">
-                                    <button className='border-0 bg-transparent ' onClick={(e) => { addToWish(item?._id) }} >
+                                    <button className='border-0 bg-transparent '
+                                        onClick={(e) => { addToWish(item?._id) }}
+                                    >
                                         <img src={wish} alt="wish image" />
                                     </button>
                                 </div>

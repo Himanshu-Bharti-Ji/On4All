@@ -5,7 +5,8 @@ import { productService } from "./productService";
 
 export const getAllProducts = createAsyncThunk("product/getAllProducts", async (thunkAPI) => {
     try {
-        return await productService.getAllProducts();
+        console.log("SLICE getAllProducts", await productService.getProducts());
+        return await productService.getProducts();
     } catch (error) {
         return thunkAPI.rejectWithValue(error);
     }

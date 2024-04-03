@@ -2,10 +2,14 @@
 import cross from "../images/cross.svg"
 import smartwatch from "../images/smartwatch.jpg"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import BreadCrumb from '../components/BreadCrumb'
 import Meta from '../components/Meta';
 import Container from '../components/Container';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserProductWishlist } from "../features/user/userSlice";
+import { addToWishlist } from "../features/product/productSlice";
+
 
 
 
@@ -15,6 +19,27 @@ import Container from '../components/Container';
 
 
 function Wishlist() {
+
+    const dispatch = useDispatch()
+
+    const wishlistState = useSelector((state) => state.auth.wishlist.data.wishlist)
+
+    useEffect(() => {
+        getWishlistFromDB()
+    }, [])
+
+    const getWishlistFromDB = () => {
+        dispatch(getUserProductWishlist())
+    }
+
+    const removeFromWishlist = (id) => {
+        dispatch(addToWishlist(id))
+        setTimeout(() => {
+            dispatch(getUserProductWishlist())
+        }, 300);
+    }
+
+
     return (
         <>
             <Meta title={"On4All | Wishlist"} />
@@ -22,42 +47,33 @@ function Wishlist() {
 
             <Container class1="wish-list-wrapper py-5 home-wrapper-2">
                 <div className="row">
-                    <div className="col-3">
-                        <div className="wishlist-card position-relative">
-                            <img className='position-absolute cross img-fluid ' src={cross} alt="cross" />
-                            <div className="wishlist-card-image">
-                                <img className='img-fluid' src={smartwatch} alt="smartwatch" />
-                            </div>
-                        </div>
-                        <div className="wishlist-card-details">
-                            <h5 className="title">LEAF WATCH WIRELESS BT CALLING SMART WATCH-CARBON BLACK</h5>
-                            <h6 className="price mb-3 ">₹2,199</h6>
-                        </div>
-                    </div>
-                    <div className="col-3">
-                        <div className="wishlist-card position-relative">
-                            <img className='position-absolute cross img-fluid ' src={cross} alt="cross" />
-                            <div className="wishlist-card-image">
-                                <img className='img-fluid' src={smartwatch} alt="smartwatch" />
-                            </div>
-                        </div>
-                        <div className="wishlist-card-details">
-                            <h5 className="title">LEAF WATCH WIRELESS BT CALLING SMART WATCH-CARBON BLACK</h5>
-                            <h6 className="price mb-3 ">₹2,199</h6>
-                        </div>
-                    </div>
-                    <div className="col-3">
-                        <div className="wishlist-card position-relative">
-                            <img className='position-absolute cross img-fluid ' src={cross} alt="cross" />
-                            <div className="wishlist-card-image">
-                                <img className='img-fluid' src={smartwatch} alt="smartwatch" />
-                            </div>
-                        </div>
-                        <div className="wishlist-card-details">
-                            <h5 className="title">LEAF WATCH WIRELESS BT CALLING SMART WATCH-CARBON BLACK</h5>
-                            <h6 className="price mb-3 ">₹2,199</h6>
-                        </div>
-                    </div>
+                    {
+                        wishlistState.length === 0 && <div className="text-center fs-3  ">No Data</div>
+                    }
+                    {
+                        wishlistState?.map((item, index) => {
+                            return (
+                                <div className="col-3" key={index}>
+                                    <div className="wishlist-card position-relative">
+                                        <img
+                                            className='position-absolute cross img-fluid '
+                                            src={cross}
+                                            alt="cross"
+                                            onClick={() => { removeFromWishlist(item?._id) }}
+                                        />
+                                        <div className="wishlist-card-image">
+                                            <img className='img-fluid d-block mx-auto' src={item?.images[0]?.url ? item?.images[0]?.url : smartwatch} alt="smartwatch" />
+                                        </div>
+                                    </div>
+                                    <div className="wishlist-card-details">
+                                        <h5 className="title">{item?.title}</h5>
+                                        <h6 className="price mb-3 ">₹{item?.price}</h6>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+
                 </div>
             </Container>
 
