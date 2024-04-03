@@ -22,7 +22,13 @@ function Wishlist() {
 
     const dispatch = useDispatch()
 
-    const wishlistState = useSelector((state) => state.auth.wishlist.data.wishlist)
+    const wishlistState = useSelector((state) => {
+        if (state.auth.wishlist.data) {
+            return state.auth.wishlist.data.wishlist || [];
+        } else {
+            return state.auth.wishlist || [];
+        }
+    });
 
     useEffect(() => {
         getWishlistFromDB()
@@ -31,6 +37,7 @@ function Wishlist() {
     const getWishlistFromDB = () => {
         dispatch(getUserProductWishlist())
     }
+
 
     const removeFromWishlist = (id) => {
         dispatch(addToWishlist(id))

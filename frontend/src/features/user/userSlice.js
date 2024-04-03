@@ -18,7 +18,7 @@ export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAP
     }
 })
 
-export const getUserProductWishlist = createAsyncThunk("user/wishlist", async (thunkAPI) => {
+export const getUserProductWishlist = createAsyncThunk("user/wishlist", async (_, thunkAPI) => {
     try {
         return await authService.getUserWishlist();
     } catch (error) {
@@ -33,7 +33,8 @@ const initialState = {
     isError: false,
     isSuccess: false,
     isLoading: false,
-    message: ""
+    message: "",
+    wishlist: []
 }
 
 export const authSlice = createSlice({

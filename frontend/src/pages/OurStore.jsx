@@ -27,7 +27,6 @@ function OurStore() {
     const dispatch = useDispatch()
 
     const productState = useSelector((state) => state.product.product.data)
-    console.log("PRODUCT STATE", productState);
 
     useEffect(() => {
         getProducts()
