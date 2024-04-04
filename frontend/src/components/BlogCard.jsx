@@ -17,7 +17,7 @@ function BlogCard(props) {
         <div className="blog-content">
           <p className='date'>{date}</p>
           <h5 className='title'>{title}</h5>
-          <p className="desc" dangerouslySetInnerHTML={{ __html: description.substr(0, 80) + "..." }}></p>
+          <p className="desc" dangerouslySetInnerHTML={{ __html: description?.substr(0, 80) + "..." }}></p>
           <Link to={`${location.pathname === "/blogs" ? id : "blogs/" + id}`} className='button'>Read More</Link>
         </div>
       </div>
