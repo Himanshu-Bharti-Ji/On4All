@@ -11,13 +11,6 @@ import { getUserProductWishlist } from "../features/user/userSlice";
 import { addToWishlist } from "../features/product/productSlice";
 
 
-
-
-
-
-
-
-
 function Wishlist() {
 
     const dispatch = useDispatch()

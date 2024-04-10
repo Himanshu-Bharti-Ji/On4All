@@ -44,12 +44,7 @@ import { services } from '../utils/Data';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllBlogs } from "../features/blog/blogSlice"
 import moment from "moment";
-
-
-
-
-
-
+import { getAllProducts } from "../features/product/productSlice"
 
 
 const Home = () => {
@@ -57,13 +52,19 @@ const Home = () => {
   const dispatch = useDispatch()
 
   const blogState = useSelector((state) => state.blog.blog.data)
+  const productState = useSelector((state) => state.product.product.data)
 
   useEffect(() => {
     getBlogs()
+    getProducts()
   }, [])
 
   const getBlogs = () => {
     dispatch(getAllBlogs())
+  }
+
+  const getProducts = () => {
+    dispatch(getAllProducts())
   }
 
   return (
@@ -297,12 +298,21 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          <SpecialProduct />
-          <SpecialProduct />
-          <SpecialProduct />
-          <SpecialProduct />
-          <SpecialProduct />
-          <SpecialProduct />
+          {
+            productState && productState.map((item, index) => {
+              if (item.tags === "special") {
+                return <SpecialProduct key={index}
+                  title={item?.title}
+                  brand={item?.brand}
+                  price={item?.price}
+                  totalRatings={item?.totalRatings}
+                  imageUrl={item?.images[0].url}
+                  quantity={item?.quantity}
+                  sold={item?.sold}
+                />
+              }
+            })
+          }
         </div>
       </Container>
 
@@ -312,11 +322,17 @@ const Home = () => {
             <h3 className="section-heading">Our Popular Products</h3>
           </div>
           <div className='d-flex flex-wrap justify-content-between gap-4'>
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            {
+              productState &&
+              productState
+                .filter(item => item.tags === "popular")
+                .map((item, index) => (
+                  <ProductCard
+                    key={index}
+                    data={[item]} // Pass an array containing only the item object
+                  />
+                ))
+            }
           </div>
         </div>
       </Container>
@@ -364,7 +380,7 @@ const Home = () => {
             <h3 className="section-heading">Our Latest Blogs</h3>
           </div>
           {
-            blogState?.map((item, index) => {
+            blogState && blogState?.map((item, index) => {
               if (index <= 4) {
                 return (
                   <BlogCard
