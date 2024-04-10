@@ -13,7 +13,7 @@ import { EmailShareButton, EmailIcon, FacebookShareButton, FacebookIcon, Whatsap
 
 
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import Meta from '../components/Meta';
 import BreadCrumb from '../components/BreadCrumb'
@@ -23,15 +23,30 @@ import InnerImageZoom from 'react-inner-image-zoom';
 import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css';
 import Color from "../components/Color";
 import Container from '../components/Container';
+import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getSingleProduct } from "../features/product/productSlice"
+
+
 
 
 
 
 function SingleProduct() {
-    const [orderedProduct, setOrderedProduct] = useState(true);
 
+    const [orderedProduct, setOrderedProduct] = useState(true);
     const currentPageUrl = window.location.href;
 
+
+    const location = useLocation();
+    const getPorductId = location.pathname.split("/")[3];
+    const dispatch = useDispatch()
+    const SingleProductState = useSelector((state) => state?.product?.singleProduct?.data)
+    console.log(SingleProductState);
+
+    useEffect(() => {
+        dispatch(getSingleProduct(getPorductId))
+    }, [])
 
 
     return (
@@ -45,7 +60,15 @@ function SingleProduct() {
                         <div className="col-6">
                             <div className="main-product-image">
                                 <div>
-                                    <InnerImageZoom zoomScale={2.3} zoomType='hover' zoomPreload={true} hideHint={true} fadeDuration={0} src={smartwatch} zoomSrc={smartwatch} />
+                                    <InnerImageZoom
+                                        zoomScale={2.3}
+                                        zoomType='hover'
+                                        zoomPreload={true}
+                                        hideHint={true}
+                                        fadeDuration={0}
+                                        src={SingleProductState?.images[0]?.url ? SingleProductState?.images[0]?.url : smartwatch}
+                                        zoomSrc={SingleProductState?.images[0]?.url ? SingleProductState?.images[0]?.url : smartwatch}
+                                    />
                                 </div>
                             </div>
                             <div className="other-product-images d-flex d-wrap gap-15">
@@ -58,14 +81,14 @@ function SingleProduct() {
                         <div className="col-6">
                             <div className="main-product-details ms-4">
                                 <div >
-                                    <h3 className='title border-bottom'>LEAF WATCH WIRELESS BT CALLING SMART WATCH-CARBON BLACK</h3>
+                                    <h3 className='title border-bottom'>{SingleProductState?.title}</h3>
                                     <div className="border-bottom pb-3 ">
-                                        <p className="price">₹ 2,199</p>
+                                        <p className="price">₹ {SingleProductState?.price}</p>
                                         <div className="d-flex gap-10 align-items-center ">
                                             <ReactStars
                                                 count={5}
                                                 size={24}
-                                                value={3}
+                                                value={SingleProductState?.totalRatings}
                                                 edit={false}
                                                 activeColor="#ffd700"
                                             />
@@ -80,15 +103,15 @@ function SingleProduct() {
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Brand : </h3>
-                                            <p className='product-data'>Leaf</p>
+                                            <p className='product-data'>{SingleProductState?.brand}</p>
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Categories : </h3>
-                                            <p className='product-data'>Smartwatches Fitness Trackers Luxury Smartwatches Sports Watches Kids Smartwatches</p>
+                                            <p className='product-data'>{SingleProductState?.productCategory}</p>
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Tags : </h3>
-                                            <p className='product-data'>Digital Watch Men's Smartwatch Leather Strap Wireless Charging Fitness Watch</p>
+                                            <p className='product-data'>{SingleProductState?.tags}</p>
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Availability : </h3>
@@ -196,7 +219,7 @@ function SingleProduct() {
                     <div className="col-12">
                         <h4>Description</h4>
                         <div className="description-content bg-white p-3 ">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, harum adipisci a suscipit saepe magni omnis iusto consequatur similique perferendis molestiae nam et. Reiciendis impedit iste quibusdam a consectetur officiis porro natus, nostrum at sapiente libero illum. Cupiditate, id deserunt? Perspiciatis assumenda itaque ad ea molestiae soluta illum eius esse, autem, odit ex placeat maiores tempore possimus alias sit voluptate. Necessitatibus aut dolores odit inventore! Explicabo, quo aut? Eos facilis ratione ipsa veniam amet. Laudantium nobis neque laborum tempora minus, optio at accusamus, minima facere ad fuga molestias nulla explicabo. Veniam quaerat at nisi quia vero quidem culpa, ipsam quos aliquid eos atque vel sit reprehenderit alias pariatur vitae! Et dolorem repellat dolor, expedita voluptatem alias placeat nihil doloribus harum ex eum numquam.</p>
+                            <p dangerouslySetInnerHTML={{ __html: SingleProductState?.description }}></p>
                         </div>
                     </div>
 

@@ -2,6 +2,8 @@ import React from 'react'
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 
 
 // importing images
@@ -20,6 +22,7 @@ function ProductCard(props) {
     let location = useLocation();
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const addToWish = (id) => {
         dispatch(addToWishlist(id))
@@ -31,7 +34,7 @@ function ProductCard(props) {
                 data?.map((item, index) => {
                     return (
                         <div key={index} className={`${location.pathname === "/store" ? `gr-${grid}` : "col-2"}`}>
-                            <Link
+                            <div
                                 // to={`${location.pathname === "/" ? "store/product/:id" : location.pathname === "store" ? "" : "product/:id"}`} 
                                 className="product-card position-relative ">
                                 <div className="wishlist-icon position-absolute ">
@@ -68,14 +71,14 @@ function ProductCard(props) {
                                             <img src={prodcompare} alt="prodcompare" />
                                         </button>
                                         <button className='border-0 bg-transparent '>
-                                            <img src={view} alt="view" />
+                                            <img onClick={() => navigate(`/store/product/${item?._id}`)} src={view} alt="view" />
                                         </button>
                                         <button className='border-0 bg-transparent '>
                                             <img src={add_cart} alt="add cart" />
                                         </button>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         </div>
                     )
                 })

@@ -307,7 +307,9 @@ const Home = () => {
           {
             productState && productState.map((item, index) => {
               if (item.tags === "special") {
-                return <SpecialProduct key={index}
+                return <SpecialProduct
+                  key={index}
+                  id={item?._id}
                   title={item?.title}
                   brand={item?.brand}
                   price={item?.price}

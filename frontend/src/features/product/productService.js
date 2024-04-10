@@ -3,10 +3,6 @@ import { base_url, config } from '../../utils/axiosConfig';
 
 
 const getProducts = async () => {
-    // const response = await axios.get(`${base_url}/product/all-products`);
-    // if (response.data) {
-    //     return response.data;
-    // }
     try {
         const response = await axios.get(`${base_url}/product/all-products`);
         if (response.data) {
@@ -18,11 +14,19 @@ const getProducts = async () => {
     }
 }
 
+const getSingleProduct = async (id) => {
+    try {
+        const response = await axios.get(`${base_url}/product/${id}`);
+        if (response.data) {
+            return response.data;
+        }
+    } catch (error) {
+        console.error("Error fetching single product: ", error);
+        throw error;
+    }
+}
+
 const addToWishlist = async (productId) => {
-    // const response = await axios.put(`${base_url}/product/wishlist`, { productId }, config);
-    // if (response.data) {
-    //     return response.data;
-    // }
     try {
         const response = await axios.put(`${base_url}/product/wishlist`, { productId }, config);
         if (response.data) {
@@ -36,5 +40,6 @@ const addToWishlist = async (productId) => {
 
 export const productService = {
     getProducts,
-    addToWishlist
+    addToWishlist,
+    getSingleProduct,
 }

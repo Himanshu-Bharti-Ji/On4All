@@ -9,7 +9,7 @@ import samsungphone_3 from "../images/special product/samsungphone-3.jpg"
 
 
 function SpecialProduct(props) {
-    const { title, brand, price, totalRatings, imageUrl, quantity, sold } = props;
+    const { title, brand, price, totalRatings, imageUrl, quantity, sold, id } = props;
     return (
         <div className='col-4 mb-4 '>
             <div className="special-product-card  ">
@@ -64,7 +64,7 @@ function SpecialProduct(props) {
                                 </div>
                             </div>
                         </div>
-                        <Link className='button mt-3 '>Add to Cart</Link>
+                        <Link to={`/store/product/${id}`} className='button mt-3 '>View Product</Link>
                     </div>
                 </div>
             </div>
