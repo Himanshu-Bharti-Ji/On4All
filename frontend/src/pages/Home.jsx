@@ -235,11 +235,17 @@ const Home = () => {
             <h3 className="section-heading">Featured Collection</h3>
           </div>
           <div className='d-flex flex-wrap justify-content-between gap-4'>
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            {
+              productState &&
+              productState
+                .filter(item => item.tags === "featured")
+                .map((item, index) => (
+                  <ProductCard
+                    key={index}
+                    data={[item]} // Pass an array containing only the item object
+                  />
+                ))
+            }
           </div>
 
 
