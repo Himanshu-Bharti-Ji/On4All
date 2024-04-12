@@ -552,6 +552,34 @@ const removeProductFromCart = asyncHandeler(async (req, res) => {
     }
 })
 
+const updateProductQuantityFromCart = asyncHandeler(async (req, res) => {
+    const { _id } = req.user;
+    const { cartItemId, newQuantity } = req.params;
+    validateMongoDbId(_id);
+
+    try {
+        const cartItem = await Cart.findOne(
+            {
+                userId: _id,
+                _id: cartItemId,
+            }
+        )
+
+        cartItem.quantity = newQuantity
+        cartItem.save()
+
+        return res.status(200)
+            .json(new ApiResponse(200, cartItem,
+                `The quantity of product has been updated`
+            ))
+
+    } catch (error) {
+        throw new ApiError(500, error?.message ||
+            `Server Error While Updating The Quantity Of Product`
+        )
+    }
+})
+
 const emptyCart = asyncHandeler(async (req, res) => {
     const { _id } = req.user;
     validateMongoDbId(_id);
@@ -767,5 +795,6 @@ module.exports = {
     updateOrderStatus,
     getAllOrders,
     getOrderByUserId,
-    removeProductFromCart
+    removeProductFromCart,
+    updateProductQuantityFromCart,
 }

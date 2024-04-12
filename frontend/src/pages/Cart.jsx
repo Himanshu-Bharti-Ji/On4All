@@ -9,7 +9,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import Container from '../components/Container';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteCartProduct, getUserCart } from "../features/user/userSlice";
+import { deleteCartProduct, getUserCart, updateCartProduct } from "../features/user/userSlice";
 
 
 
@@ -23,13 +23,34 @@ function Cart() {
 
     const dispatch = useDispatch();
     const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
-    console.log(userCartState);
-    const [color, setColor] = useState(null);
+    const [productUpdateDetail, setProductUpdateDetail] = useState(null);
+    const [quantities, setQuantities] = useState({});
+
 
 
     useEffect(() => {
         dispatch(getUserCart())
     }, [])
+
+    useEffect(() => {
+        if (productUpdateDetail !== null) {
+            dispatch(updateCartProduct(
+                {
+                    cartItemId: productUpdateDetail?.cartItemId,
+                    quantity: productUpdateDetail?.quantity
+                }
+            ))
+            setTimeout(() => {
+                dispatch(getUserCart())
+            }, 300);
+        }
+    }, [productUpdateDetail])
+
+    const handleQuantityChange = (id, value) => {
+        const newQuantities = { ...quantities, [id]: value };
+        setQuantities(newQuantities);
+        setProductUpdateDetail({ cartItemId: id, quantity: value });
+    };
 
     const deleteACartProduct = (id) => {
         dispatch(deleteCartProduct(id))
@@ -81,7 +102,11 @@ function Cart() {
                                                     type="number"
                                                     name=""
                                                     id=""
-                                                    value={item?.quantity}
+                                                    // value={productUpdateDetail?.quantity ? productUpdateDetail?.quantity : item?.quantity}
+                                                    // onChange={(e) => { setProductUpdateDetail({ cartItemId: item?._id, quantity: e.target.value }) }}
+                                                    value={quantities[item?._id] || item?.quantity}
+                                                    onChange={(e) => handleQuantityChange(item?._id, e.target.value)}
+
                                                 />
                                             </div>
                                             <div className='cart-del-btn'>
