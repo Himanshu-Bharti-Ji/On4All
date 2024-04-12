@@ -25,8 +25,7 @@ function Cart() {
     const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
     const [productUpdateDetail, setProductUpdateDetail] = useState(null);
     const [quantities, setQuantities] = useState({});
-
-
+    const [totalAmount, setTotalAmount] = useState(null);
 
     useEffect(() => {
         dispatch(getUserCart())
@@ -59,6 +58,14 @@ function Cart() {
         }, 300);
     }
 
+    useEffect(() => {
+        let sum = 0;
+        for (let index = 0; index < userCartState?.length; index++) {
+            sum = sum + (Number(userCartState[index].quantity) * userCartState[index].price)
+        }
+        setTotalAmount(sum)
+    }, [userCartState])
+
     return (
         <>
             <Meta title={"On4All | Cart"} />
@@ -84,10 +91,12 @@ function Cart() {
                                             <div className='w-75'>
                                                 <p>{item?.productId?.title}</p>
                                                 {/* <p>Size : M</p> */}
-                                                <p>Color : <ul className='colors ps-0 mb-0'>
-                                                    <li style={{ backgroundColor: item?.color?.color }}></li>
-                                                </ul>
-                                                </p>
+                                                <div>
+                                                    Color :
+                                                    <ul className='colors ps-0 mb-0'>
+                                                        <li style={{ backgroundColor: item?.color?.color }}></li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className='cart-col-2'>
@@ -129,11 +138,14 @@ function Cart() {
                         <div className="d-flex justify-content-between align-items-baseline  ">
                             <Link to={"/store"} className='button'>Continue Shopping</Link>
                         </div>
-                        <div className="d-flex flex-column align-items-end  ">
-                            <h4>SubTotal : ₹ 2,199</h4>
-                            <p>Taxes and shipping calculated at checkout</p>
-                            <Link to={"/checkout"} className='button'>Checkout</Link>
-                        </div>
+                        {
+                            (totalAmount !== null && totalAmount !== 0) &&
+                            <div className="d-flex flex-column align-items-end  ">
+                                <h4>SubTotal : ₹ {totalAmount}</h4>
+                                <p>Taxes and shipping calculated at checkout</p>
+                                <Link to={"/checkout"} className='button'>Checkout</Link>
+                            </div>
+                        }
                     </div>
                 </div>
             </Container>
