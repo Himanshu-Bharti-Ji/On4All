@@ -22,7 +22,8 @@ const { registerUser,
     getOrders,
     updateOrderStatus,
     getAllOrders,
-    getOrderByUserId
+    getOrderByUserId,
+    removeProductFromCart
 } = require("../controller/userController.js");
 const { verifyJWT, isAdmin } = require("../middlewares/authMiddleware.js");
 
@@ -48,6 +49,7 @@ router.post("/getorderbyuser/:id", verifyJWT, isAdmin, getOrderByUserId);
 router.get("/:id", verifyJWT, isAdmin, getCurrentUser);
 
 router.delete("/empty-cart", verifyJWT, emptyCart);
+router.delete("/delete-product-cart/:cartItemId", verifyJWT, removeProductFromCart);
 router.delete("/:id", deleteCurrentUser);
 
 router.put("/update-account", verifyJWT, updateUserDetails)

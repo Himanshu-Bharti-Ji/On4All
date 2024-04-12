@@ -531,6 +531,27 @@ const getUserCart = asyncHandeler(async (req, res) => {
     }
 })
 
+const removeProductFromCart = asyncHandeler(async (req, res) => {
+    const { _id } = req.user;
+    const { cartItemId } = req.params;
+    validateMongoDbId(_id);
+
+    try {
+        const deleteProductFromCart = await Cart.deleteOne(
+            {
+                userId: _id,
+                _id: cartItemId,
+            }
+        )
+
+        return res.status(200)
+            .json(new ApiResponse(200, deleteProductFromCart, 'Product has been removed from cart'))
+
+    } catch (error) {
+        throw new ApiError(500, error?.message || 'Server error while removing product from cart')
+    }
+})
+
 const emptyCart = asyncHandeler(async (req, res) => {
     const { _id } = req.user;
     validateMongoDbId(_id);
@@ -745,5 +766,6 @@ module.exports = {
     getOrders,
     updateOrderStatus,
     getAllOrders,
-    getOrderByUserId
+    getOrderByUserId,
+    removeProductFromCart
 }

@@ -30,11 +30,12 @@ import InnerImageZoom from 'react-inner-image-zoom';
 import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css';
 import Color from "../components/Color";
 import Container from '../components/Container';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getSingleProduct } from "../features/product/productSlice"
 import { toast } from "react-toastify"
-import { addProductToCart } from "../features/user/userSlice"
+import { addProductToCart, getUserCart } from "../features/user/userSlice"
+
 
 
 
@@ -48,14 +49,28 @@ function SingleProduct() {
 
     const [color, setColor] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [alreadyAdded, setAlreadyAdded] = useState(false);
 
     const location = useLocation();
     const getPorductId = location.pathname.split("/")[3];
     const dispatch = useDispatch()
+    const navigate = useNavigate();
     const singleProductState = useSelector((state) => state?.product?.singleProduct?.data)
+    const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
 
     useEffect(() => {
         dispatch(getSingleProduct(getPorductId))
+        dispatch(getUserCart())
+    }, [])
+
+    useEffect(() => {
+
+        for (let index = 0; index < userCartState.length; index++) {
+            if (getPorductId === userCartState[index]?.productId?._id) {
+                setAlreadyAdded(true)
+                // break;
+            }
+        }
     }, [])
 
     const uploadCart = () => {
@@ -70,6 +85,7 @@ function SingleProduct() {
                     price: singleProductState?.price
                 }
             ))
+            navigate("/cart")
         }
     }
 
@@ -150,31 +166,41 @@ function SingleProduct() {
                                                 <span className="badge">XL</span>
                                             </div>
                                         </div>
-                                        <div className="d-flex gap-2  flex-column  my-20">
-                                            <h3 className='product-heading mb-2'>Color : </h3>
-                                            <Color setColor={setColor} colorData={singleProductState?.color} />
-                                        </div>
+                                        {
+                                            alreadyAdded === false &&
+                                            <>
+                                                <div className="d-flex gap-2  flex-column  my-20">
+                                                    <h3 className='product-heading mb-2'>Color : </h3>
+                                                    <Color setColor={setColor} colorData={singleProductState?.color} />
+                                                </div>
+                                            </>
+                                        }
                                         <div className="d-flex gap-2 align-items-center my-20">
-                                            <h3 className='product-heading'>Quantity : </h3>
-                                            <div className="">
-                                                <input
-                                                    className='form-control w-82'
-                                                    type="number"
-                                                    name="quantity"
-                                                    id=""
-                                                    min={1}
-                                                    max={10}
-                                                    onChange={(e) => setQuantity(e.target.value)}
-                                                    value={quantity}
-                                                />
-                                            </div>
+                                            {
+                                                alreadyAdded === false &&
+                                                <>
+                                                    <h3 className='product-heading'>Quantity : </h3>
+                                                    <div className="">
+                                                        <input
+                                                            className='form-control w-82'
+                                                            type="number"
+                                                            name="quantity"
+                                                            id=""
+                                                            min={1}
+                                                            max={10}
+                                                            onChange={(e) => setQuantity(e.target.value)}
+                                                            value={quantity}
+                                                        />
+                                                    </div>
+                                                </>
+                                            }
                                             <div className="d-flex gap-15 align-items-center">
                                                 <button
                                                     className='button border-0 '
                                                     type="submit"
-                                                    onClick={() => { uploadCart() }}
+                                                    onClick={() => { alreadyAdded ? navigate("/cart") : uploadCart() }}
                                                 >
-                                                    Add to Cart
+                                                    {alreadyAdded ? "Go to Cart" : "Add to Cart"}
                                                 </button>
                                                 <button className='button border-0 signup '>Buy It Now</button>
                                             </div>

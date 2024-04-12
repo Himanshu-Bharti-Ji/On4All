@@ -42,6 +42,14 @@ export const getUserCart = createAsyncThunk("user/get-user-cart", async (thunkAP
     }
 })
 
+export const deleteCartProduct = createAsyncThunk("user/delete-cart-product", async (id, thunkAPI) => {
+    try {
+        return await authService.removeProductFromCart(id);
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+})
+
 const getCustomerFromLocalStorage = localStorage.getItem("customer") ? JSON.parse(localStorage.getItem('customer')) : null;
 
 const initialState = {
@@ -149,6 +157,27 @@ export const authSlice = createSlice({
                 state.isError = true;
                 state.isSuccess = false;
                 state.message = action.error;
+            })
+            .addCase(deleteCartProduct.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(deleteCartProduct.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.deletedCartProduct = action.payload;
+                if (state.isSuccess) {
+                    toast.success("Product Deleted from Cart")
+                }
+            })
+            .addCase(deleteCartProduct.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+                if (state.isSuccess === false) {
+                    toast.error("Product Not Deleted from Cart")
+                }
             });
     }
 })

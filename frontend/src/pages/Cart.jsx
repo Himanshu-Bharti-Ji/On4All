@@ -9,8 +9,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import Container from '../components/Container';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserCart } from "../features/user/userSlice";
-import Color from "../components/Color";
+import { deleteCartProduct, getUserCart } from "../features/user/userSlice";
 
 
 
@@ -31,6 +30,13 @@ function Cart() {
     useEffect(() => {
         dispatch(getUserCart())
     }, [])
+
+    const deleteACartProduct = (id) => {
+        dispatch(deleteCartProduct(id))
+        setTimeout(() => {
+            dispatch(getUserCart())
+        }, 300);
+    }
 
     return (
         <>
@@ -79,7 +85,10 @@ function Cart() {
                                                 />
                                             </div>
                                             <div className='cart-del-btn'>
-                                                <RiDeleteBin5Line />
+                                                <RiDeleteBin5Line
+                                                    className="text-danger"
+                                                    onClick={() => { deleteACartProduct(item?._id) }}
+                                                />
                                             </div>
                                         </div>
                                         <div className='cart-col-4'>
