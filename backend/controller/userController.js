@@ -495,47 +495,24 @@ const getWishlist = asyncHandeler(async (req, res) => {
 })
 
 const userCart = asyncHandeler(async (req, res) => {
-    const { cart } = req.body;
+    const { productId, color, price, quantity } = req.body;
     const { _id } = req.user;
     validateMongoDbId(_id);
 
     try {
-        let products = [];
-        const user = await User.findById(_id);
-
-        // Checking if user already have product in cart
-        const alreadyExistInCart = await Cart.findOne({ orderby: user._id });
-
-        if (alreadyExistInCart) {
-            alreadyExistInCart.remove();
-        }
-
-        for (let i = 0; i < cart.length; i++) {
-            let object = {};
-            object.product = cart[i]._id;
-            object.count = cart[i].count;
-            object.color = cart[i].color;
-            let getPrice = await Product.findById(cart[i]._id,).select("price").exec();
-            object.price = getPrice.price;
-            products.push(object);
-        }
-
-        let cartTotal = 0;
-        for (let i = 0; i < products.length; i++) {
-            cartTotal = cartTotal + products[i].price * products[i].count;
-        }
-
         const newCart = await new Cart({
-            products,
-            cartTotal,
-            orderby: user?._id,
+            userId: _id,
+            productId,
+            color,
+            price,
+            quantity,
         }).save();
 
         return res.status(201)
             .json(new ApiResponse(201, newCart, "Product added to the cart successfully"))
 
     } catch (error) {
-        throw new ApiError(error?.message || 400, `Product with id ${cart[0] ? cart[0]._id : ''} not found`)
+        throw new ApiError(error?.message || 400, 'Something went wrong while adding product to the cart')
     }
 })
 
@@ -544,7 +521,7 @@ const getUserCart = asyncHandeler(async (req, res) => {
     validateMongoDbId(_id);
 
     try {
-        const cart = await Cart.findOne({ orderby: _id }).populate("products.product");
+        const cart = await Cart.find({ userId: _id }).populate("productId").populate("color");
 
         return res.status(200)
             .json(new ApiResponse(200, cart, 'Getting user cart was successful'))

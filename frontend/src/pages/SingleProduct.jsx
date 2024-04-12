@@ -9,8 +9,15 @@ import { IoGitCompareOutline } from "react-icons/io5";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { LiaPuzzlePieceSolid } from "react-icons/lia";
 
-import { EmailShareButton, EmailIcon, FacebookShareButton, FacebookIcon, WhatsappShareButton, WhatsappIcon, TwitterShareButton, XIcon } from "react-share";
-
+import {
+    EmailShareButton,
+    EmailIcon,
+    FacebookShareButton,
+    FacebookIcon,
+    WhatsappShareButton,
+    WhatsappIcon,
+    TwitterShareButton, XIcon
+} from "react-share";
 
 
 import React, { useEffect } from 'react'
@@ -26,6 +33,8 @@ import Container from '../components/Container';
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getSingleProduct } from "../features/product/productSlice"
+import { toast } from "react-toastify"
+import { addProductToCart } from "../features/user/userSlice"
 
 
 
@@ -37,17 +46,32 @@ function SingleProduct() {
     const [orderedProduct, setOrderedProduct] = useState(true);
     const currentPageUrl = window.location.href;
 
+    const [color, setColor] = useState(null);
+    const [quantity, setQuantity] = useState(1);
 
     const location = useLocation();
     const getPorductId = location.pathname.split("/")[3];
     const dispatch = useDispatch()
-    const SingleProductState = useSelector((state) => state?.product?.singleProduct?.data)
-    console.log(SingleProductState);
+    const singleProductState = useSelector((state) => state?.product?.singleProduct?.data)
 
     useEffect(() => {
         dispatch(getSingleProduct(getPorductId))
     }, [])
 
+    const uploadCart = () => {
+        if (color === null) {
+            toast.error("Please Select Color")
+        } else {
+            dispatch(addProductToCart(
+                {
+                    productId: singleProductState?._id,
+                    quantity,
+                    color,
+                    price: singleProductState?.price
+                }
+            ))
+        }
+    }
 
     return (
         <>
@@ -66,8 +90,8 @@ function SingleProduct() {
                                         zoomPreload={true}
                                         hideHint={true}
                                         fadeDuration={0}
-                                        src={SingleProductState?.images[0]?.url ? SingleProductState?.images[0]?.url : smartwatch}
-                                        zoomSrc={SingleProductState?.images[0]?.url ? SingleProductState?.images[0]?.url : smartwatch}
+                                        src={singleProductState?.images[0]?.url ? singleProductState?.images[0]?.url : smartwatch}
+                                        zoomSrc={singleProductState?.images[0]?.url ? singleProductState?.images[0]?.url : smartwatch}
                                     />
                                 </div>
                             </div>
@@ -81,14 +105,14 @@ function SingleProduct() {
                         <div className="col-6">
                             <div className="main-product-details ms-4">
                                 <div >
-                                    <h3 className='title border-bottom'>{SingleProductState?.title}</h3>
+                                    <h3 className='title border-bottom'>{singleProductState?.title}</h3>
                                     <div className="border-bottom pb-3 ">
-                                        <p className="price">₹ {SingleProductState?.price}</p>
+                                        <p className="price">₹ {singleProductState?.price}</p>
                                         <div className="d-flex gap-10 align-items-center ">
                                             <ReactStars
                                                 count={5}
                                                 size={24}
-                                                value={SingleProductState?.totalRatings}
+                                                value={singleProductState?.totalRatings}
                                                 edit={false}
                                                 activeColor="#ffd700"
                                             />
@@ -103,15 +127,15 @@ function SingleProduct() {
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Brand : </h3>
-                                            <p className='product-data'>{SingleProductState?.brand}</p>
+                                            <p className='product-data'>{singleProductState?.brand}</p>
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Categories : </h3>
-                                            <p className='product-data'>{SingleProductState?.productCategory}</p>
+                                            <p className='product-data'>{singleProductState?.productCategory}</p>
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Tags : </h3>
-                                            <p className='product-data'>{SingleProductState?.tags}</p>
+                                            <p className='product-data'>{singleProductState?.tags}</p>
                                         </div>
                                         <div className="d-flex gap-2  align-items-center my-20">
                                             <h3 className='product-heading'>Availability : </h3>
@@ -128,15 +152,30 @@ function SingleProduct() {
                                         </div>
                                         <div className="d-flex gap-2  flex-column  my-20">
                                             <h3 className='product-heading mb-2'>Color : </h3>
-                                            <Color />
+                                            <Color setColor={setColor} colorData={singleProductState?.color} />
                                         </div>
                                         <div className="d-flex gap-2 align-items-center my-20">
                                             <h3 className='product-heading'>Quantity : </h3>
                                             <div className="">
-                                                <input className='form-control w-82' type="number" name="quantity" id="" min={1} max={10} />
+                                                <input
+                                                    className='form-control w-82'
+                                                    type="number"
+                                                    name="quantity"
+                                                    id=""
+                                                    min={1}
+                                                    max={10}
+                                                    onChange={(e) => setQuantity(e.target.value)}
+                                                    value={quantity}
+                                                />
                                             </div>
                                             <div className="d-flex gap-15 align-items-center">
-                                                <button className='button border-0 ' type="submit">Add to Cart</button>
+                                                <button
+                                                    className='button border-0 '
+                                                    type="submit"
+                                                    onClick={() => { uploadCart() }}
+                                                >
+                                                    Add to Cart
+                                                </button>
                                                 <button className='button border-0 signup '>Buy It Now</button>
                                             </div>
                                         </div>
@@ -219,7 +258,7 @@ function SingleProduct() {
                     <div className="col-12">
                         <h4>Description</h4>
                         <div className="description-content bg-white p-3 ">
-                            <p dangerouslySetInnerHTML={{ __html: SingleProductState?.description }}></p>
+                            <p dangerouslySetInnerHTML={{ __html: singleProductState?.description }}></p>
                         </div>
                     </div>
 
