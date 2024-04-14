@@ -27,6 +27,7 @@ const { registerUser,
     updateProductQuantityFromCart
 } = require("../controller/userController.js");
 const { verifyJWT, isAdmin } = require("../middlewares/authMiddleware.js");
+const { checkout, paymentVerification } = require("../controller/paymentController.js");
 
 const router = express.Router();
 
@@ -44,6 +45,8 @@ router.post("/refresh-token", refreshAccessToken);
 router.get("/all-users", getAllUsers);
 router.get("/wishlist", verifyJWT, getWishlist);
 router.get("/get-cart", verifyJWT, getUserCart);
+router.post("/order/checkout", verifyJWT, checkout)
+router.post("/order/paymentVerification", verifyJWT, paymentVerification)
 // router.get("/get-orders", verifyJWT, getOrders);
 // router.get("/all-orders", verifyJWT, isAdmin, getAllOrders);
 // router.post("/getorderbyuser/:id", verifyJWT, isAdmin, getOrderByUserId);

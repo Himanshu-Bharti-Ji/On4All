@@ -30,7 +30,6 @@ var orderSchema = new mongoose.Schema(
             },
             other: {
                 type: String,
-                required: true
             },
             pincode: {
                 type: Number,

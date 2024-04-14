@@ -9,6 +9,9 @@ import Container from '../components/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import axios from "axios";
+import { config } from "../utils/axiosConfig"
+import { createCurrentOrder } from "../features/user/userSlice";
 
 
 const shippingSchema = yup.object({
@@ -25,8 +28,11 @@ const shippingSchema = yup.object({
 function Checkout() {
 
     const dispatch = useDispatch();
-    const userCartState = useSelector((state) => state?.auth?.cartProducts?.data)
+    const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
     const [totalAmount, setTotalAmount] = useState(null);
+    const [shippingInfo, setShippingInfo] = useState(null);
+    const [paymentInfo, setPaymentInfo] = useState({ razorpayPaymentId: "", razorpayOrderId: "" });
+    const [cartProductState, setCartProductState] = useState([]);
 
 
     useEffect(() => {
@@ -48,13 +54,125 @@ function Checkout() {
             pincode: "",
         },
         validationSchema: shippingSchema,
-        onSubmit: values => {
-            alert(values)
-            // dispatch(registerUser(values))
-            // formik.resetForm();
+        onSubmit: (values) => {
+            setShippingInfo(values)
+            setTimeout(() => {
+                checkoutHandeler()
+            }, 300);
         },
     });
 
+
+    console.log("OUTSIDE", paymentInfo, shippingInfo);
+    const loadScript = (src) => {
+        return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = src
+            script.onload = () => {
+                resolve(true)
+            }
+            script.onerror = () => {
+                resolve(false)
+            }
+            document.body.appendChild(script)
+        })
+    }
+
+    useEffect(() => {
+        let items = []
+        for (let index = 0; index < userCartState?.length; index++) {
+            items.push(
+                {
+                    product: userCartState[index].productId._id,
+                    quantity: userCartState[index].quantity,
+                    color: userCartState[index].productId.color[0]._id,
+                    price: userCartState[index].price,
+
+                }
+            )
+            setCartProductState(items)
+        }
+    }, [])
+
+    const checkoutHandeler = async () => {
+
+        const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js")
+
+        if (!res) {
+            alert("Razorpay SDK failed to load. Are you online?")
+            return
+        }
+
+        const result = await axios.post("http://localhost:5000/api/v1/user/order/checkout", { amount: totalAmount + 40 }, config)
+
+        if (!result) {
+            alert("Server error. Are you online?")
+            return
+        }
+
+        const { amount, id: order_id, currency } = result.data.data.order
+        const options = {
+            key: "rzp_test_juizRynjJdW7yE", // Enter the Key ID generated from the Dashboard
+            amount: amount,
+            currency: currency,
+            name: "ON4All",
+            description: "Test Transaction",
+            // image: { logo },
+            order_id: order_id,
+            handler: async function (response) {
+                const data = {
+                    orderCreationId: order_id,
+                    razorpayPaymentId: response.razorpay_payment_id,
+                    razorpayOrderId: response.razorpay_order_id,
+                };
+                console.log("DATA", data);
+
+                const result = await axios.post("http://localhost:5000/api/v1/user/order/paymentVerification", data, config);
+
+                // if (!result) {
+                //     alert("Server error. Are you online?")
+                //     return
+                // }
+
+                // alert("RESELT", result)
+                // console.log("INSIDE", paymentInfo, shippingInfo);
+
+                setPaymentInfo(
+                    {
+                        razorpayPaymentId: response.razorpay_payment_id,
+                        razorpayOrderId: response.razorpay_order_id,
+                    }
+                )
+
+
+                dispatch(createCurrentOrder(
+                    {
+                        totalPrice: totalAmount,
+                        totalPriceAfterDiscount: totalAmount,
+                        orderItems: cartProductState,
+                        paymentInfo,
+                        shippingInfo,
+                        // paymentInfo: paymentInfo ? paymentInfo : {},
+                        // shippingInfo: shippingInfo ? shippingInfo : {},
+                    }
+                ))
+            },
+            prefill: {
+                name: "ON4All",
+                email: "on4all@example.com",
+                contact: "9999999999",
+            },
+            notes: {
+                address: "On4All Office",
+            },
+            theme: {
+                color: "#61dafb",
+            },
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+    }
     return (
         <>
 

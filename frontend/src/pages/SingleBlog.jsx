@@ -26,7 +26,7 @@ const SingleBlog = () => {
     const getBlogId = location.pathname.split("/")[2];
 
 
-    const blogState = useSelector((state) => state.blog.singleBlog.data)
+    const blogState = useSelector((state) => state?.blog?.singleBlog?.data)
 
     useEffect(() => {
         getBlog()
