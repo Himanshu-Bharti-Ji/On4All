@@ -91,8 +91,8 @@ function SingleProduct() {
 
     return (
         <>
-            <Meta title={"On4All | Product Name"} />
-            <BreadCrumb title="Product Name" />
+            <Meta title={`On4All | ${singleProductState?.title}`} />
+            <BreadCrumb title={singleProductState?.title} />
 
             <Container class1="main-product-wrapper py-5 home-wrapper-2">
                 <div className="row">

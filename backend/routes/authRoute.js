@@ -16,15 +16,10 @@ const { registerUser,
     saveUserAddress,
     userCart,
     getUserCart,
-    // emptyCart,
-    // applyCoupon,
     createOrder,
-    // getOrders,
-    // updateOrderStatus,
-    // getAllOrders,
-    // getOrderByUserId,
     removeProductFromCart,
-    updateProductQuantityFromCart
+    updateProductQuantityFromCart,
+    getUserOrders
 } = require("../controller/userController.js");
 const { verifyJWT, isAdmin } = require("../middlewares/authMiddleware.js");
 const { checkout, paymentVerification } = require("../controller/paymentController.js");
@@ -47,7 +42,7 @@ router.get("/wishlist", verifyJWT, getWishlist);
 router.get("/get-cart", verifyJWT, getUserCart);
 router.post("/order/checkout", verifyJWT, checkout)
 router.post("/order/paymentVerification", verifyJWT, paymentVerification)
-// router.get("/get-orders", verifyJWT, getOrders);
+router.get("/getMyOrders", verifyJWT, getUserOrders);
 // router.get("/all-orders", verifyJWT, isAdmin, getAllOrders);
 // router.post("/getorderbyuser/:id", verifyJWT, isAdmin, getOrderByUserId);
 router.get("/:id", verifyJWT, isAdmin, getCurrentUser);
