@@ -420,22 +420,25 @@ const unBlockUser = asyncHandeler(async (req, res) => {
 })
 
 const updatePassword = asyncHandeler(async (req, res) => {
-    const { _id } = req.user;
+    const { accessToken } = req.params;
     const { password } = req.body;
-    validateMongoDbId(_id)
-    const user = await User.findById(_id);
-
-    if (password) {
-        user.password = password;
-        const updatePassword = await user.save();
-
-        return res.status(201)
-            .json(new ApiResponse(201, updatePassword, "password updated successfully"));
-    } else {
-        throw new ApiError(400, "please provide a valid password");
+    const hashedAccessToken = crypto.createHash('sha256').update(accessToken).digest('hex');
+    const user = await User.findOne(
+        {
+            passwordResetToken: hashedAccessToken,
+            passwordResetExpires: { $gt: Date.now() }
+        }
+    )
+    if (!user) {
+        throw new ApiError(404, "user not found or token expired")
     }
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
 
-
+    const updatePassword = await user.save();
+    return res.status(201)
+        .json(new ApiResponse(201, updatePassword, "password updated successfully"));
 
 })
 
@@ -451,7 +454,7 @@ const forgotPasswordToken = asyncHandeler(async (req, res) => {
         const token = await user.createPasswordResetToken();
         await user.save();
         // send reset password mail with token to user's email id  
-        const resetURL = `Follow this link to reset your Password: <a href="http://localhost:5000/api/v1/user/reset-password/${token}">Click Here</a> \n The link is valid till 10 minutes from now.`;
+        const resetURL = `Follow this link to reset your Password: <a href="http://localhost:5173/reset-password/${token}">Click Here</a> \n The link is valid till 10 minutes from now.`;
         const data = {
             to: email,
             subject: "Forgot Password Link",

@@ -29,7 +29,7 @@ const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/forgot-password-token", forgotPasswordToken)
-router.put("/update-password", verifyJWT, updatePassword)
+router.put("/update-password/:accessToken", verifyJWT, updatePassword)
 router.post("/login", loginUser);
 router.post("/admin-login", loginAdmin);
 router.post("/add-to-cart", verifyJWT, userCart);

@@ -82,6 +82,22 @@ export const updateProfile = createAsyncThunk("user/update/profile", async (data
     }
 })
 
+export const forgotPasswordToken = createAsyncThunk("user/password/token", async (data, thunkAPI) => {
+    try {
+        return await authService.forgotPassToken(data);
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+})
+
+export const resetPassword = createAsyncThunk("user/password/reset", async (data, thunkAPI) => {
+    try {
+        return await authService.resetPass(data);
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+})
+
 const getCustomerFromLocalStorage = localStorage.getItem("customer") ? JSON.parse(localStorage.getItem('customer')) : null;
 
 const initialState = {
@@ -287,6 +303,48 @@ export const authSlice = createSlice({
                 state.message = action.error;
                 if (state.isSuccess === false) {
                     toast.error("Profile Not Updated!")
+                }
+            })
+            .addCase(forgotPasswordToken.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(forgotPasswordToken.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.accessToken = action.payload;
+                if (state.isSuccess) {
+                    toast.success("Password Reset Link Sent Successfully!")
+                }
+            })
+            .addCase(forgotPasswordToken.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+                if (state.isSuccess === false) {
+                    toast.error("Password Reset Link Not Sent!")
+                }
+            })
+            .addCase(resetPassword.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(resetPassword.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.updatedPassword = action.payload;
+                if (state.isSuccess) {
+                    toast.success("Password Reset Successfully!")
+                }
+            })
+            .addCase(resetPassword.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+                if (state.isSuccess === false) {
+                    toast.error("Password Reset Failed!")
                 }
             })
     }

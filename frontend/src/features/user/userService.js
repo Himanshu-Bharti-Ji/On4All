@@ -75,6 +75,22 @@ const updateUser = async (data) => {
     }
 }
 
+const forgotPassToken = async (data) => {
+    const response = await axios.post(`${base_url}/user/forgot-password-token`, data, config);
+    if (response.data) {
+        return response.data;
+    }
+}
+
+const resetPass = async (data) => {
+    console.log("data", data);
+    const response = await axios.put(`${base_url}/user/update-password/${data.accessToken}`, { password: data?.password }, config);
+    console.log("response", response.data);
+    if (response.data) {
+        return response.data;
+    }
+}
+
 export const authService = {
     register,
     login,
@@ -86,4 +102,6 @@ export const authService = {
     createOrder,
     getUserOrders,
     updateUser,
+    forgotPassToken,
+    resetPass,
 }
