@@ -45,7 +45,7 @@ const Orders = () => {
                             orderState && orderState?.map((item, index) => {
                                 return (
                                     <>
-                                        <div key={index} style={{ backgroundColor: "#febd69" }} className="row pt-3">
+                                        <div key={index} style={{ backgroundColor: "#febd69", borderRadius: ".25rem .25rem 0 0" }} className="row pt-3">
                                             <div className="col-3">
                                                 <p>{item?._id}</p>
                                             </div>
@@ -60,7 +60,7 @@ const Orders = () => {
                                             </div>
                                         </div>
                                         <div className="col-12">
-                                            <div className="row py-3 mb-4" style={{ backgroundColor: "#232f3e" }}>
+                                            <div className="row py-3 mb-4" style={{ backgroundColor: "#232f3e", borderRadius: " 0 0 .25rem .25rem" }}>
                                                 <div className="col-3">
                                                     <h6 className="text-white ">Product Name</h6>
                                                 </div>
