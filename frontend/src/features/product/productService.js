@@ -2,9 +2,11 @@ import axios from 'axios';
 import { base_url, config } from '../../utils/axiosConfig';
 
 
-const getProducts = async () => {
+const getProducts = async (data) => {
+    console.log(data);
     try {
-        const response = await axios.get(`${base_url}/product/all-products`);
+        const response = await axios.get(`${base_url}/product/all-products?${data?.newBrands ? `brand=${data?.newBrands}&&` : ""}${data?.newTags ? `tags=${data?.newTags}&&` : ""}${data?.newCategories ? `productCategory=${data?.newCategories}&&` : ""}${data?.minPrice ? `price[gte]=${data?.minPrice}&&` : ""}${data?.maxPrice
+            ? `price[lte]=${data?.maxPrice}&&` : ""}${data?.sort ? `sort=${data?.sort}&&` : ""}`);
         if (response.data) {
             return response.data;
         }
