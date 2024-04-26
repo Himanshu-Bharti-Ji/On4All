@@ -43,7 +43,7 @@ const ProductList = () => {
         dispatch(getProducts());
     }, [])
 
-    const productState = useSelector((state) => state.product.products.data);
+    const productState = useSelector((state) => state?.product?.products?.data);
 
     const data1 = [];
     if (productState && Array.isArray(productState)) {

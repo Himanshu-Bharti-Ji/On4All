@@ -34,8 +34,8 @@ function ResetPassword() {
             confpassword: ""
         },
         validationSchema: passwordSchema,
-        onSubmit: async (values) => {
-            await dispatch(resetPassword({ accessToken: getAccessToken, password: values.password }))
+        onSubmit: (values) => {
+            dispatch(resetPassword({ accessToken: getAccessToken, password: values.password }))
             navigate("/")
         },
     });

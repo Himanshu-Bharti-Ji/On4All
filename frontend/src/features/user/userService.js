@@ -84,7 +84,7 @@ const forgotPassToken = async (data) => {
 
 const resetPass = async (data) => {
     console.log("data", data);
-    const response = await axios.put(`${base_url}/user/update-password/${data.accessToken}`, { password: data?.password }, config);
+    const response = await axios.put(`${base_url}/user/update-password/${data.accessToken}`, data, config);
     console.log("response", response.data);
     if (response.data) {
         return response.data;

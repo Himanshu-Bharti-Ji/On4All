@@ -32,7 +32,7 @@ import Color from "../components/Color";
 import Container from '../components/Container';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getSingleProduct } from "../features/product/productSlice"
+import { addRating, getAllProducts, getSingleProduct } from "../features/product/productSlice"
 import { toast } from "react-toastify"
 import { addProductToCart, getUserCart } from "../features/user/userSlice"
 
@@ -50,17 +50,22 @@ function SingleProduct() {
     const [color, setColor] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [alreadyAdded, setAlreadyAdded] = useState(false);
+    const [popularProduct, setPopularProduct] = useState([]);
+    const [star, setStar] = useState(null);
+    const [comment, setComment] = useState(null);
 
     const location = useLocation();
     const getPorductId = location.pathname.split("/")[3];
     const dispatch = useDispatch()
     const navigate = useNavigate();
     const singleProductState = useSelector((state) => state?.product?.singleProduct?.data)
-    const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
+    const productsState = useSelector((state) => state?.product?.product?.data)
+    const userCartState = useSelector((state) => state?.auth?.cartProducts?.data)
 
     useEffect(() => {
         dispatch(getSingleProduct(getPorductId))
         dispatch(getUserCart())
+        dispatch(getAllProducts())
     }, [])
 
     useEffect(() => {
@@ -87,6 +92,33 @@ function SingleProduct() {
             ))
             navigate("/cart")
         }
+    }
+
+    useEffect(() => {
+        let data = [];
+        for (let index = 0; index < productsState?.length; index++) {
+            const element = productsState[index];
+            if (element?.tags === "popular") {
+                data.push(element)
+            }
+            setPopularProduct(data)
+        }
+    }, [productsState])
+
+    const addRatingToProduct = () => {
+        if (star == null) {
+            toast.error("Please select a star")
+            return false;
+        } else if (comment == null) {
+            toast.error("Please enter a review about the product")
+            return false;
+        } else {
+            dispatch(addRating({ star: star, comment: comment, productId: getPorductId }))
+            setTimeout(() => {
+                dispatch(getSingleProduct(getPorductId))
+            }, 300);
+        }
+        return false;
     }
 
     return (
@@ -325,30 +357,45 @@ function SingleProduct() {
                                             value={3}
                                             edit={true}
                                             activeColor="#ffd700"
+                                            onChange={(e) => { setStar(e) }}
                                         />
                                     </div>
                                     <div>
-                                        <textarea className='w-100 form-control ' name="" id="" cols="30" rows="5" placeholder='Comments'></textarea>
+                                        <textarea
+                                            className='w-100 form-control '
+                                            name=""
+                                            id=""
+                                            cols="30"
+                                            rows="5"
+                                            placeholder='Comments'
+                                            onChange={(e) => { setComment(e.target.value) }}
+                                        ></textarea>
                                     </div>
                                     <div className='d-flex justify-content-end my-2  '>
-                                        <button className="button border-0 ">Submit Review</button>
+                                        <button onClick={addRatingToProduct} className="button border-0 " type="button">Submit Review</button>
                                     </div>
                                 </form>
                             </div>
                             <div className="reviews mt-4 ">
-                                <div className="review">
-                                    <div className='d-flex align-items-center gap-10'>
-                                        <h6 className="mb-0">Himanshu Bharti</h6>
-                                        <ReactStars
-                                            count={5}
-                                            size={24}
-                                            value={3}
-                                            edit={true}
-                                            activeColor="#ffd700"
-                                        />
-                                    </div>
-                                    <p className='mt-3'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Et consequatur mollitia quidem sed, iusto in velit accusantium quia, aliquid voluptatum, aut fuga repellat quae aperiam nostrum unde. Quaerat perferendis culpa, nostrum ut ad dolor alias similique explicabo a ex, laboriosam facere corrupti tempora fugit iusto.</p>
-                                </div>
+                                {
+                                    singleProductState && singleProductState?.ratings?.map((item, index) => {
+                                        return (
+                                            <div key={index} className="review">
+                                                <div className='d-flex align-items-center gap-10'>
+                                                    <h6 className="mb-0">Himanshu Bharti</h6>
+                                                    <ReactStars
+                                                        count={5}
+                                                        size={24}
+                                                        value={item?.star}
+                                                        edit={true}
+                                                        activeColor="#ffd700"
+                                                    />
+                                                </div>
+                                                <p className='mt-3'>{item?.comment}</p>
+                                            </div>
+                                        )
+                                    })
+                                }
                             </div>
                         </div>
                     </div>
@@ -362,11 +409,7 @@ function SingleProduct() {
                         <h3 className="section-heading">Our Popular Products</h3>
                     </div>
                     <div className='d-flex flex-wrap justify-content-between gap-4'>
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
+                        <ProductCard data={popularProduct} />
                     </div>
                 </div>
             </Container>

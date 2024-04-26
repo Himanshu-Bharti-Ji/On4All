@@ -38,8 +38,21 @@ const addToWishlist = async (productId) => {
     }
 }
 
+const rateProduct = async (data) => {
+    try {
+        const response = await axios.put(`${base_url}/product/ratings`, data, config);
+        if (response.data) {
+            return response.data;
+        }
+    } catch (error) {
+        console.error("Error rating product: ", error);
+        throw error;
+    }
+}
+
 export const productService = {
     getProducts,
     addToWishlist,
     getSingleProduct,
+    rateProduct,
 }
