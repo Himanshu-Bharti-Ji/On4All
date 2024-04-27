@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'antd';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
-import { getProducts, resetState } from '../features/product/productSlice';
+import { deleteCurrentProduct, getProducts, resetState } from '../features/product/productSlice';
 import { Link } from 'react-router-dom';
+import CustomModal from '../components/CustomModal';
+
 
 const columns = [
     {
@@ -37,6 +39,18 @@ const columns = [
 
 
 const ProductList = () => {
+
+    const [open, setOpen] = useState(false);
+    const [productId, setProductId] = useState("");
+    const showModal = (e) => {
+        setOpen(true);
+        setProductId(e);
+    };
+
+    const hideModal = () => {
+        setOpen(false);
+    };
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -60,12 +74,22 @@ const ProductList = () => {
                         <Link to={`/admin/product/${productState[i]._id}`} className='fs-4 text-success '>
                             <TbEdit />
                         </Link>
-                        <Link to="/" className=' ms-3 fs-4 text-danger '>
+                        <button to="/" className=' ms-3 fs-4 text-danger bg-transparent border-0 '
+                            onClick={() => showModal(productState[i]._id)}
+                        >
                             <MdDeleteForever />
-                        </Link>
+                        </button>
                     </>,
             });
         }
+    }
+
+    const deleteProduct = (e) => {
+        setOpen(false)
+        dispatch(deleteCurrentProduct(e))
+        setTimeout(() => {
+            dispatch(getProducts());
+        }, 100);
     }
 
     return (
@@ -74,6 +98,12 @@ const ProductList = () => {
             <div>
                 <Table columns={columns} dataSource={data1} />
             </div>
+            <CustomModal
+                hideModal={hideModal}
+                open={open}
+                performAction={() => deleteProduct(productId)}
+                title="Are you sure you want to delete this Product ?"
+            />
         </div>
     )
 }

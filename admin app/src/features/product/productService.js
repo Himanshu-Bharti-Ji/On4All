@@ -42,11 +42,18 @@ const updateCurrentProduct = async (product) => {
     return response.data;
 }
 
+const deleteCurrentProduct = async (id) => {
+    const response = await axios.delete(`${base_url}/product/${id}`, config)
+    return response.data;
+
+}
+
 const productService = {
     getProducts,
     createProduct,
     getCurrentProduct,
     updateCurrentProduct,
+    deleteCurrentProduct
 }
 
 export default productService;
