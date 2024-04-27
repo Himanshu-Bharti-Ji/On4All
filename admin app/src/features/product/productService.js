@@ -16,9 +16,37 @@ const createProduct = async (product) => {
     return response.data;
 }
 
+const getCurrentProduct = async (id) => {
+    const response = await axios.get(`${base_url}/product/${id}`, config)
+
+    return response.data;
+}
+
+const updateCurrentProduct = async (product) => {
+    const response = await axios.put(
+        `${base_url}/product/${product.id}`,
+        {
+            title: product.productData.title,
+            description: product.productData.description,
+            productCategory: product.productData.productCategory,
+            price: product.productData.price,
+            brand: product.productData.brand,
+            tags: product.productData.tags,
+            color: product.productData.color,
+            quantity: product.productData.quantity,
+            images: product.productData.images,
+        },
+        config
+    )
+
+    return response.data;
+}
+
 const productService = {
     getProducts,
     createProduct,
+    getCurrentProduct,
+    updateCurrentProduct,
 }
 
 export default productService;

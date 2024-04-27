@@ -3,7 +3,7 @@ import { Table } from 'antd';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
-import { getProducts } from '../features/product/productSlice';
+import { getProducts, resetState } from '../features/product/productSlice';
 import { Link } from 'react-router-dom';
 
 const columns = [
@@ -40,6 +40,7 @@ const ProductList = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(resetState());
         dispatch(getProducts());
     }, [])
 
@@ -56,7 +57,7 @@ const ProductList = () => {
                 category: `${productState[i].productCategory}`,
                 action:
                     <>
-                        <Link to="/" className='fs-4 text-success '>
+                        <Link to={`/admin/product/${productState[i]._id}`} className='fs-4 text-success '>
                             <TbEdit />
                         </Link>
                         <Link to="/" className=' ms-3 fs-4 text-danger '>

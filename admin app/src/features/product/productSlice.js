@@ -25,6 +25,30 @@ export const createProducts = createAsyncThunk(
     }
 )
 
+export const getCurrentProduct = createAsyncThunk(
+    "product/get-product",
+    async (id, thunkAPI) => {
+        try {
+            return await productService.getCurrentProduct(id);
+        } catch (error) {
+            const errorMessage = error.message || 'Failed to get product';
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+)
+
+export const updateCurrentProduct = createAsyncThunk(
+    "product/update-product",
+    async (product, thunkAPI) => {
+        try {
+            return await productService.updateCurrentProduct(product);
+        } catch (error) {
+            const errorMessage = error.message || 'Failed to update product';
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+)
+
 
 
 const initialState = {
@@ -68,6 +92,44 @@ export const productSlice = createSlice({
                 state.createdProduct = action.payload;
             })
             .addCase(createProducts.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.payload;
+            })
+            .addCase(getCurrentProduct.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getCurrentProduct.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.productName = action.payload.data.title;
+                state.productCategory = action.payload.data.productCategory;
+                state.productDescription = action.payload.data.description;
+                state.productPrice = action.payload.data.price;
+                state.productBrand = action.payload.data.brand;
+                state.tagsProduct = action.payload.data.tags;
+                state.productColor = action.payload.data.color;
+                state.productQuantity = action.payload.data.quantity;
+                state.productImages = action.payload.data.images;
+            })
+            .addCase(getCurrentProduct.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.payload;
+            })
+            .addCase(updateCurrentProduct.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateCurrentProduct.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.updatedProduct = action.payload;
+            })
+            .addCase(updateCurrentProduct.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.isSuccess = false;
