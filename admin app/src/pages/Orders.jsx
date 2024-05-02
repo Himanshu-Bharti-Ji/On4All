@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Table } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrders } from '../features/auth/authSlice';
+import { getOrders, updateSingleOrder } from '../features/auth/authSlice';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from 'react-router-dom';
@@ -41,28 +41,37 @@ const Orders = () => {
         dispatch(getOrders());
     }, [])
 
-    const orderState = useSelector((state) => state.auth.orders.data);
+    const orderState = useSelector((state) => state?.auth?.orders?.data);
 
     const data1 = [];
     if (orderState && Array.isArray(orderState)) {
         for (let i = 0; i < orderState.length; i++) {
             data1.push({
                 key: i + 1,
-                name: `${orderState[i].orderby.firstName} ${orderState[i].orderby.lastName}`,
-                product: <Link to={`/admin/order/${orderState[i].orderby._id}`}>View Orders</Link>,
-                amount: orderState[i].paymentIntent.amount,
-                date: new Date(orderState[i].createdAt).toLocaleDateString(),
+                name: `${orderState[i]?.user?.firstName} ${orderState[i]?.user?.lastName}`,
+                product: <Link to={`/admin/order/${orderState[i]?._id}`}>View Orders</Link>,
+                amount: orderState[i]?.totalPriceAfterDiscount,
+                date: new Date(orderState[i]?.createdAt).toLocaleDateString(),
                 action:
                     <>
-                        <Link to="/" className='fs-4 text-success '>
-                            <TbEdit />
-                        </Link>
-                        <Link to="/" className=' ms-3 fs-4 text-danger '>
-                            <MdDeleteForever />
-                        </Link>
+                        <select name="" id=""
+                            defaultValue={orderState[i]?.orderStatus ? orderState[i]?.orderStatus : "Ordered"}
+                            className='form-control form-select '
+                            onChange={(e) => updateOrderStatus(orderState[i]?._id, e.target.value)}
+                        >
+                            <option value="Ordered" disabled >Ordered</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Out for delivery">Out for delivery</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
                     </>
             });
         }
+    }
+
+    const updateOrderStatus = (id, status) => {
+        dispatch(updateSingleOrder({ id: id, status: status }))
     }
 
     return (

@@ -616,6 +616,130 @@ const getUserOrders = asyncHandeler(async (req, res) => {
     }
 })
 
+const getAllOrders = asyncHandeler(async (req, res) => {
+    try {
+        const orders = await Order.find().populate("user").populate("orderItems.product").populate("orderItems.color")
+        return res.status(200)
+            .json(new ApiResponse(200, orders, 'Orders Fetched Successfully',))
+    } catch (error) {
+        throw new ApiError(500, error?.message || `Server Error While Fetching The Orders`)
+    }
+})
+
+const getSingleOrder = asyncHandeler(async (req, res) => {
+    const { id } = req.params
+    try {
+        const order = await Order.findOne({ _id: id }).populate("user").populate("orderItems.product")
+        if (!order) {
+            // If no order is found, return a 404 status
+            return res.status(404).json(new ApiResponse(404, null, 'No order found with the given ID'));
+        }
+        return res.status(200)
+            .json(new ApiResponse(200, order, 'Order Fetched Successfully',))
+    } catch (error) {
+        throw new ApiError(500, error?.message || `Server Error While Fetching The Order`)
+    }
+})
+
+const updateOrder = asyncHandeler(async (req, res) => {
+    const { id } = req.params
+    try {
+        const order = await Order.findById(id)
+        order.orderStatus = req.body.status;
+        await order.save({ validateBeforeSave: false })
+        return res.status(200)
+            .json(new ApiResponse(200, order, `Order Status Updated Successfully`,))
+    } catch (error) {
+        throw new ApiError(500, error?.message || `Server Error While Updating The Order Status`)
+    }
+})
+
+const getMonthWiseOrderIncome = asyncHandeler(async (req, res) => {
+    let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let d = new Date()
+    let endDate = ""
+    d.setDate(1)
+    for (let index = 0; index < 11; index++) {
+        d.setMonth(d.getMonth() - 1)
+        endDate = monthNames[d.getMonth()] + " " + d.getFullYear()
+    }
+    const data = await Order.aggregate(
+        [
+            {
+                $match: {
+                    createdAt: {
+                        $lte: new Date(),
+                        $gte: new Date(endDate)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        month: "$month"
+                    },
+                    amount: {
+                        $sum: "$totalPriceAfterDiscount"
+                    },
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ]
+    )
+
+    res.status(200)
+        .json(new ApiResponse(
+            200,
+            data,
+            "Orders fetched successfully",
+        ))
+
+})
+
+const getYearlyTotalOrders = asyncHandeler(async (req, res) => {
+    let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let d = new Date()
+    let endDate = ""
+    d.setDate(1)
+    for (let index = 0; index < 11; index++) {
+        d.setMonth(d.getMonth() - 1)
+        endDate = monthNames[d.getMonth()] + " " + d.getFullYear()
+    }
+    const data = await Order.aggregate(
+        [
+            {
+                $match: {
+                    createdAt: {
+                        $lte: new Date(),
+                        $gte: new Date(endDate)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    count: {
+                        $sum: 1
+                    },
+                    amount: {
+                        $sum: "$totalPriceAfterDiscount"
+                    }
+                }
+            }
+        ]
+    )
+
+    res.status(200)
+        .json(new ApiResponse(
+            200,
+            data,
+            "Orders fetched successfully",
+        ))
+
+})
+
 module.exports = {
     registerUser,
     loginUser,
@@ -638,4 +762,9 @@ module.exports = {
     getUserOrders,
     removeProductFromCart,
     updateProductQuantityFromCart,
+    getMonthWiseOrderIncome,
+    getYearlyTotalOrders,
+    getAllOrders,
+    getSingleOrder,
+    updateOrder,
 }

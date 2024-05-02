@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Table } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrderByUser, getOrders } from '../features/auth/authSlice';
+import { getOrders, getSingleOrder } from '../features/auth/authSlice';
 import { TbEdit } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from 'react-router-dom';
@@ -36,10 +36,6 @@ const columns = [
         title: 'Date',
         dataIndex: 'date',
     },
-    {
-        title: 'Action',
-        dataIndex: 'action',
-    },
 ];
 
 
@@ -48,38 +44,30 @@ const ViewOrder = () => {
     const dispatch = useDispatch();
     const location = useLocation();
 
-    const userId = location.pathname.split("/")[3];
+    const orderId = location.pathname.split("/")[3];
 
     useEffect(() => {
-        dispatch(getOrderByUser(userId));
+        dispatch(getSingleOrder(orderId));
     }, [])
 
-    const orderState = useSelector((state) => state.auth.orderByUser.data.products);
+    const orderState = useSelector((state) => state.auth?.singleOrder?.data);
     console.log(orderState);
 
+    console.log("Hello", orderState?.orderItems?.length);
     const data1 = [];
-    if (orderState && Array.isArray(orderState)) {
-        for (let i = 0; i < orderState.length; i++) {
-            data1.push({
-                key: i + 1,
-                name: orderState[i].product.title,
-                brand: orderState[i].product.brand,
-                count: orderState[i].count,
-                color: orderState[i].product.color,
-                amount: orderState[i].product.price,
-                date: new Date(orderState[i].product.createdAt).toLocaleDateString(),
-                action:
-                    <>
-                        <Link to="/" className='fs-4 text-success '>
-                            <TbEdit />
-                        </Link>
-                        <Link to="/" className=' ms-3 fs-4 text-danger '>
-                            <MdDeleteForever />
-                        </Link>
-                    </>
-            });
-        }
+
+    for (let i = 0; i < orderState?.orderItems?.length; i++) {
+        data1.push({
+            key: i + 1,
+            name: orderState?.orderItems[i]?.product?.title,
+            brand: orderState?.orderItems[i]?.product?.brand,
+            count: orderState?.orderItems[i]?.quantity,
+            color: orderState?.orderItems[i]?.color,
+            amount: orderState?.totalPriceAfterDiscount,
+            date: new Date(orderState?.createdAt).toLocaleDateString(),
+        });
     }
+
 
     return (
         <div>

@@ -19,7 +19,12 @@ const { registerUser,
     createOrder,
     removeProductFromCart,
     updateProductQuantityFromCart,
-    getUserOrders
+    getUserOrders,
+    getMonthWiseOrderIncome,
+    getYearlyTotalOrders,
+    getAllOrders,
+    getSingleOrder,
+    updateOrder
 } = require("../controller/userController.js");
 const { verifyJWT, isAdmin } = require("../middlewares/authMiddleware.js");
 const { checkout, paymentVerification } = require("../controller/paymentController.js");
@@ -43,7 +48,11 @@ router.get("/get-cart", verifyJWT, getUserCart);
 router.post("/order/checkout", verifyJWT, checkout)
 router.post("/order/paymentVerification", verifyJWT, paymentVerification)
 router.get("/getMyOrders", verifyJWT, getUserOrders);
-// router.get("/all-orders", verifyJWT, isAdmin, getAllOrders);
+router.get("/getAllOrders", verifyJWT, isAdmin, getAllOrders);
+router.get("/getSingleOrder/:id", verifyJWT, isAdmin, getSingleOrder);
+router.put("/updateOrder/:id", verifyJWT, isAdmin, updateOrder);
+router.get("/getMonthWiseOrderIncome", verifyJWT, getMonthWiseOrderIncome);
+router.get("/getYearlyTotalOrders", verifyJWT, getYearlyTotalOrders);
 // router.post("/getorderbyuser/:id", verifyJWT, isAdmin, getOrderByUserId);
 router.get("/:id", verifyJWT, isAdmin, getCurrentUser);
 
