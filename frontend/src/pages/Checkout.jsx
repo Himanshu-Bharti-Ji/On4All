@@ -3,7 +3,7 @@ import smartwatch from "../images/smartwatch.jpg"
 
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { IoArrowBackOutline } from "react-icons/io5";
 import Container from '../components/Container';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,10 +28,10 @@ const shippingSchema = yup.object({
 function Checkout() {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
     const [totalAmount, setTotalAmount] = useState(null);
     const [shippingInfo, setShippingInfo] = useState(null);
-    const [paymentInfo, setPaymentInfo] = useState({ razorpayPaymentId: "", razorpayOrderId: "" });
     const [cartProductState, setCartProductState] = useState([]);
 
 
@@ -42,6 +42,12 @@ function Checkout() {
         }
         setTotalAmount(sum)
     }, [userCartState])
+
+    useEffect(() => {
+        if (shippingInfo) {
+            checkoutHandeler();
+        }
+    }, [shippingInfo]);
 
     const formik = useFormik({
         initialValues: {
@@ -56,14 +62,11 @@ function Checkout() {
         validationSchema: shippingSchema,
         onSubmit: (values) => {
             setShippingInfo(values)
-            setTimeout(() => {
-                checkoutHandeler()
-            }, 300);
         },
     });
 
 
-    console.log("OUTSIDE", paymentInfo, shippingInfo);
+    console.log("OUTSIDE", shippingInfo);
     const loadScript = (src) => {
         return new Promise((resolve) => {
             const script = document.createElement("script");
@@ -128,34 +131,23 @@ function Checkout() {
                 console.log("DATA", data);
 
                 const result = await axios.post("http://localhost:5000/api/v1/user/order/paymentVerification", data, config);
+                console.log("RESULT", result);
 
-                // if (!result) {
-                //     alert("Server error. Are you online?")
-                //     return
-                // }
+                setTimeout(() => {
+                    dispatch(createCurrentOrder(
+                        {
+                            totalPrice: totalAmount,
+                            totalPriceAfterDiscount: totalAmount,
+                            orderItems: cartProductState,
+                            paymentInfo: result?.data?.data,
+                            shippingInfo,
+                        }
+                    ))
+                }, 300);
 
-                // alert("RESELT", result)
-                // console.log("INSIDE", paymentInfo, shippingInfo);
+                // Navigate to my-orders page after successful order creation
+                navigate("/my-orders");
 
-                setPaymentInfo(
-                    {
-                        razorpayPaymentId: response.razorpay_payment_id,
-                        razorpayOrderId: response.razorpay_order_id,
-                    }
-                )
-
-
-                dispatch(createCurrentOrder(
-                    {
-                        totalPrice: totalAmount,
-                        totalPriceAfterDiscount: totalAmount,
-                        orderItems: cartProductState,
-                        paymentInfo,
-                        shippingInfo,
-                        // paymentInfo: paymentInfo ? paymentInfo : {},
-                        // shippingInfo: shippingInfo ? shippingInfo : {},
-                    }
-                ))
             },
             prefill: {
                 name: "ON4All",

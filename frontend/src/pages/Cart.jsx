@@ -22,7 +22,7 @@ import { deleteCartProduct, getUserCart, updateCartProduct } from "../features/u
 function Cart() {
 
     const dispatch = useDispatch();
-    const userCartState = useSelector((state) => state.auth?.cartProducts?.data)
+    const userCartState = useSelector((state) => state?.auth?.cartProducts?.data)
     const [productUpdateDetail, setProductUpdateDetail] = useState(null);
     const [quantities, setQuantities] = useState({});
     const [totalAmount, setTotalAmount] = useState(null);
