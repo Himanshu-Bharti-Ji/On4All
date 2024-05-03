@@ -133,7 +133,10 @@ export const authSlice = createSlice({
                 state.isSuccess = false;
                 state.message = action.error;
                 if (state.isError === true) {
-                    toast.error(action.error);
+                    // Extract error message from HTML response
+                    const errorMessageMatch = action.payload.response.data.match(/Error:\s*([^<]+)/);
+                    const errorMessage = errorMessageMatch ? errorMessageMatch[1].trim() : 'Unknown error';
+                    toast.error(errorMessage);
                 }
             })
             .addCase(loginUser.pending, (state) => {
@@ -155,7 +158,11 @@ export const authSlice = createSlice({
                 state.isSuccess = false;
                 state.message = action.error;
                 if (state.isError === true) {
-                    toast.error(action.error);
+                    // Extract error message from HTML response
+                    const errorMessageMatch = action.payload.response.data.match(/Error:\s*([^<]+)/);
+                    const errorMessage = errorMessageMatch ? errorMessageMatch[1].trim() : 'Unknown error';
+
+                    toast.error(errorMessage);
                 }
             })
             .addCase(getUserProductWishlist.pending, (state) => {
@@ -292,9 +299,25 @@ export const authSlice = createSlice({
                 state.isError = false;
                 state.isSuccess = true;
                 state.updatedUser = action.payload;
-                if (state.isSuccess) {
-                    toast.success("Profile Updated Successfully!")
+                console.log("Action ", action.payload);
+                let currentUser = JSON.parse(localStorage.getItem("customer"))
+                console.log(currentUser);
+                let newUserData = {
+                    ...currentUser,
+                    // _id: currentUser?.data?.user?._id,
+                    // accessToken: currentUser?.data?.accessToken,
+                    firstName: action?.payload?.data?.firstName,
+                    lastName: action?.payload?.data?.lastName,
+                    email: action?.payload?.data?.email,
+                    mobile: action?.payload?.data?.mobile,
                 }
+                console.log(
+                    "New User Data ",
+                    newUserData
+                );
+                localStorage.setItem("customer", JSON.stringify(newUserData));
+                toast.success("Profile Updated Successfully!")
+
             })
             .addCase(updateProfile.rejected, (state, action) => {
                 state.isLoading = false;

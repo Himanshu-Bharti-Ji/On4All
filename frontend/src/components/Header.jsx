@@ -118,7 +118,7 @@ const Header = () => {
                   <Link to={authState?.user === null ? "/login" : "/my-profile"} className='d-flex align-items-center gap-10 text-white '>
                     <img src={user} alt="My Account" />
                     {
-                      authState?.user === null ? <p className='mb-0'>Log in  <br /> My Account</p> : <p className='mb-0'>Welcome  <br /> {authState?.user?.data?.user?.firstName}</p>
+                      authState?.user === null ? <p className='mb-0'>Log in  <br /> My Account</p> : <p className='mb-0'>Welcome  <br /> {authState?.updatedUser === undefined ? authState?.user?.data?.user?.firstName : authState?.updatedUser?.data?.firstName }</p>
 
                     }
                   </Link>

@@ -18,6 +18,15 @@ const profileSchema = yup.object({
 
 const Profile = () => {
 
+    const getTokenFromLocalStorage = localStorage.getItem("accessToken") ? localStorage.getItem("accessToken") : null;
+
+    const config2 = {
+        headers: {
+            Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage : ""}`,
+            Accept: "application/json"
+        }
+    }
+
     const dispatch = useDispatch()
     const userState = useSelector((state) => state.auth?.user?.data)
     const [edit, setEdit] = useState(true)
@@ -32,7 +41,7 @@ const Profile = () => {
         },
         validationSchema: profileSchema,
         onSubmit: values => {
-            dispatch(updateProfile(values))
+            dispatch(updateProfile({ data: values, config2: config2 }))
             setEdit(true)
         },
     });
