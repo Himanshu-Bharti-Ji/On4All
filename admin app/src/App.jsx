@@ -2,8 +2,6 @@ import { useState } from 'react'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
-import ResetPassword from './pages/ResetPassword'
-import ForgotPassword from './pages/ForgotPassword'
 import MainLayout from './components/MainLayout'
 import Dashboard from './pages/Dashboard'
 import Enquirires from './pages/Enquirires'
@@ -25,6 +23,8 @@ import AddCoupon from './pages/AddCoupon'
 import CouponList from './pages/CouponList'
 import ViewEnquiry from './pages/ViewEnquiry'
 import ViewOrder from './pages/ViewOrder'
+import { PrivateRoutes } from './routing/PrivateRoutes'
+import { OpenRoutes } from './routing/OpenRotes'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -32,10 +32,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/admin" element={<MainLayout />}>
+        <Route path="/" element={<OpenRoutes><Login /></OpenRoutes>} />
+        <Route path="/admin" element={<PrivateRoutes><MainLayout /></PrivateRoutes>}>
           <Route index element={<Dashboard />} />
           <Route path='enquiries' element={<Enquirires />} />
           <Route path='enquiries/:id' element={<ViewEnquiry />} />

@@ -19,7 +19,7 @@ import { SiBrandfolder } from "react-icons/si";
 import { BiCategoryAlt, BiColorFill, BiBookAdd } from "react-icons/bi";
 import { MdLibraryBooks, MdOutlineContactPage, MdNotifications } from "react-icons/md";
 import { TbCategoryPlus } from "react-icons/tb";
-import { PiGraphDuotone } from "react-icons/pi";
+import { PiGraphDuotone, PiSignOutBold } from "react-icons/pi";
 import { RiCoupon2Line } from "react-icons/ri";
 
 
@@ -51,8 +51,9 @@ const MainLayout = () => {
                     mode="inline"
                     defaultSelectedKeys={['']}
                     onClick={({ key }) => {
-                        if (key == "signout") {
-
+                        if (key === "signout") {
+                            localStorage.clear()
+                            window.location.reload()
                         } else {
                             navigate(key)
                         }
@@ -168,6 +169,11 @@ const MainLayout = () => {
                             key: 'enquiries',
                             icon: <MdOutlineContactPage className='fs-5' />,
                             label: 'Enquiries',
+                        },
+                        {
+                            key: 'signout',
+                            icon: <PiSignOutBold className='fs-5' />,
+                            label: 'Signout',
                         },
                     ]}
                 />
