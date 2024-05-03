@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import { authService } from "./userService";
 import { toast } from "react-toastify";
 
@@ -58,6 +58,14 @@ export const updateCartProduct = createAsyncThunk("user/update-cart-product", as
     }
 })
 
+export const emptyUserCart = createAsyncThunk("user/empty-user-cart", async (thunkAPI) => {
+    try {
+        return await authService.emptyCart();
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+})
+
 export const createCurrentOrder = createAsyncThunk("user/cart/create-order", async (orderDetail, thunkAPI) => {
     try {
         return await authService.createOrder(orderDetail);
@@ -97,6 +105,8 @@ export const resetPassword = createAsyncThunk("user/password/reset", async (data
         return thunkAPI.rejectWithValue(error);
     }
 })
+
+export const resetState = createAction("Reset_all");
 
 const getCustomerFromLocalStorage = localStorage.getItem("customer") ? JSON.parse(localStorage.getItem('customer')) : null;
 
@@ -299,22 +309,14 @@ export const authSlice = createSlice({
                 state.isError = false;
                 state.isSuccess = true;
                 state.updatedUser = action.payload;
-                console.log("Action ", action.payload);
                 let currentUser = JSON.parse(localStorage.getItem("customer"))
-                console.log(currentUser);
                 let newUserData = {
                     ...currentUser,
-                    // _id: currentUser?.data?.user?._id,
-                    // accessToken: currentUser?.data?.accessToken,
                     firstName: action?.payload?.data?.firstName,
                     lastName: action?.payload?.data?.lastName,
                     email: action?.payload?.data?.email,
                     mobile: action?.payload?.data?.mobile,
                 }
-                console.log(
-                    "New User Data ",
-                    newUserData
-                );
                 localStorage.setItem("customer", JSON.stringify(newUserData));
                 toast.success("Profile Updated Successfully!")
 
@@ -370,6 +372,22 @@ export const authSlice = createSlice({
                     toast.error("Password Reset Failed!")
                 }
             })
+            .addCase(emptyUserCart.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(emptyUserCart.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+                state.emptiedCart = action.payload;
+            })
+            .addCase(emptyUserCart.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.message = action.error;
+            })
+            .addCase(resetState, () => initialState);
     }
 })
 

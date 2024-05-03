@@ -11,7 +11,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from "axios";
 import { config } from "../utils/axiosConfig"
-import { createCurrentOrder } from "../features/user/userSlice";
+import { createCurrentOrder, emptyUserCart, resetState } from "../features/user/userSlice";
 
 
 const shippingSchema = yup.object({
@@ -66,7 +66,6 @@ function Checkout() {
     });
 
 
-    console.log("OUTSIDE", shippingInfo);
     const loadScript = (src) => {
         return new Promise((resolve) => {
             const script = document.createElement("script");
@@ -128,10 +127,8 @@ function Checkout() {
                     razorpayPaymentId: response.razorpay_payment_id,
                     razorpayOrderId: response.razorpay_order_id,
                 };
-                console.log("DATA", data);
 
                 const result = await axios.post("http://localhost:5000/api/v1/user/order/paymentVerification", data, config);
-                console.log("RESULT", result);
 
                 setTimeout(() => {
                     dispatch(createCurrentOrder(
@@ -143,6 +140,8 @@ function Checkout() {
                             shippingInfo,
                         }
                     ))
+                    dispatch(emptyUserCart())
+                    // dispatch(resetState())
                 }, 300);
 
                 // Navigate to my-orders page after successful order creation

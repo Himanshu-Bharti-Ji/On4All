@@ -10,7 +10,6 @@ const Orders = () => {
 
     const dispatch = useDispatch();
     const orderState = useSelector((state) => state.auth?.getOrderedProducts?.data)
-    console.log(orderState)
 
     useEffect(() => {
         dispatch(getOrders())

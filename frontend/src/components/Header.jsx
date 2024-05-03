@@ -16,6 +16,7 @@ import user from "../images/user.svg"
 import cart from "../images/cart.svg"
 import menu from "../images/menu.svg"
 import { getSingleProduct } from '../features/product/productSlice';
+import { getUserCart } from '../features/user/userSlice';
 
 
 
@@ -33,6 +34,9 @@ const Header = () => {
   const [paginate, setPaginate] = useState(true);
   const [totalAmount, setTotalAmount] = useState(null);
 
+  useEffect(() => {
+    dispatch(getUserCart())
+  }, [])
 
   useEffect(() => {
     let sum = 0;
@@ -118,7 +122,7 @@ const Header = () => {
                   <Link to={authState?.user === null ? "/login" : "/my-profile"} className='d-flex align-items-center gap-10 text-white '>
                     <img src={user} alt="My Account" />
                     {
-                      authState?.user === null ? <p className='mb-0'>Log in  <br /> My Account</p> : <p className='mb-0'>Welcome  <br /> {authState?.updatedUser === undefined ? authState?.user?.data?.user?.firstName : authState?.updatedUser?.data?.firstName }</p>
+                      authState?.user === null ? <p className='mb-0'>Log in  <br /> My Account</p> : <p className='mb-0'>Welcome  <br /> {authState?.updatedUser === undefined ? authState?.user?.data?.user?.firstName : authState?.updatedUser?.data?.firstName}</p>
 
                     }
                   </Link>

@@ -555,6 +555,21 @@ const removeProductFromCart = asyncHandeler(async (req, res) => {
     }
 })
 
+const emptyCart = asyncHandeler(async (req, res) => {
+    const { _id } = req.user;
+    validateMongoDbId(_id);
+
+    try {
+        const deleteCart = await Cart.deleteMany({ userId: _id })
+
+        return res.status(200)
+            .json(new ApiResponse(200, deleteCart, 'Cart has been emptied'))
+
+    } catch (error) {
+        throw new ApiError(500, error?.message || 'Server error while emptying cart')
+    }
+})
+
 const updateProductQuantityFromCart = asyncHandeler(async (req, res) => {
     const { _id } = req.user;
     const { cartItemId, newQuantity } = req.params;
@@ -767,4 +782,5 @@ module.exports = {
     getAllOrders,
     getSingleOrder,
     updateOrder,
+    emptyCart,
 }
