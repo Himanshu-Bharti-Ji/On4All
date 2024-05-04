@@ -33,7 +33,12 @@ const addToCart = async (cartData) => {
 }
 
 const getCart = async () => {
-    const response = await axios.get(`${base_url}/user/get-cart`, config);
+    const response = await axios.get(`${base_url}/user/get-cart`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            Accept: 'application/json',
+        },
+    });
     if (response.data) {
         return response.data;
     }

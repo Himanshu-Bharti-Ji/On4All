@@ -27,7 +27,7 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate()
-  const authState = useSelector((state) => state.auth)
+  const authState = useSelector((state) => state?.auth)
   const userCartState = useSelector((state) => state?.auth?.cartProducts?.data)
   const productState = useSelector((state) => state?.product?.product?.data);
   const [productOption, setProductOption] = useState([]);
@@ -35,24 +35,30 @@ const Header = () => {
   const [totalAmount, setTotalAmount] = useState(null);
 
   useEffect(() => {
-    dispatch(getUserCart())
-  }, [])
+    if (authState?.user !== null) {
+      dispatch(getUserCart())
+    }
+  }, [authState?.user, dispatch])
 
   useEffect(() => {
-    let sum = 0;
-    for (let index = 0; index < userCartState?.length; index++) {
-      sum = sum + (Number(userCartState[index].quantity) * userCartState[index].price)
+    if (userCartState) {
+      let sum = 0;
+      for (let index = 0; index < userCartState?.length; index++) {
+        sum = sum + (Number(userCartState[index].quantity) * userCartState[index].price)
+      }
+      setTotalAmount(sum)
     }
-    setTotalAmount(sum)
   }, [userCartState])
 
   useEffect(() => {
-    let data = [];
-    for (let index = 0; index < productState?.length; index++) {
-      const element = productState[index];
-      data.push({ id: index, product: element?._id, name: element?.title })
+    if (productState) {
+      let data = [];
+      for (let index = 0; index < productState?.length; index++) {
+        const element = productState[index];
+        data.push({ id: index, product: element?._id, name: element?.title })
+      }
+      setProductOption(data)
     }
-    setProductOption(data)
   }, [productState])
 
   const handleLogout = () => {
@@ -131,7 +137,7 @@ const Header = () => {
                   <Link to={"/cart"} className='d-flex align-items-center gap-10 text-white '>
                     <img src={cart} alt="cart" />
                     <div className='d-flex flex-column gap-10'>
-                      <span className='badge bg-white text-dark badge-w'>{userCartState?.length ? userCartState?.length : 0}</span>
+                      <span className='badge bg-white text-dark badge-w'>{userCartState && (userCartState?.length ? userCartState?.length : 0)}</span>
                       <p className='mb-0'>₹{totalAmount ? totalAmount : 0}</p>
                     </div>
                   </Link>
